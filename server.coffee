@@ -4,7 +4,6 @@ express = require 'express'
 app = express()
 
 app.configure ->
-  app.use 
   app.set 'port', process.env.PORT or 3000
   app.set 'views', "#{__dirname}/views"
   app.set 'view engine', 'jade'
