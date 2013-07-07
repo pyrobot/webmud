@@ -2,5 +2,36 @@
 html
   head
     title WebMUD REVIVAL
+    script(src='/lib/term.js')
+    script(src='/scripts/app.js')
+    style
+      h1 {
+        margin-bottom: 20px;
+        font: 20px/1.5 sans-serif;
+      }
+
+      .terminal {
+        float: left;
+        border: #000 solid 5px;
+        font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
+        font-size: 11px;
+        color: #f0f0f0;
+        background: #000;
+      }
+
+      .reverse-video {
+        color: #000;
+        background: #f0f0f0;
+      }
   body
     block content
+    script
+      setTimeout(function() {
+        var term = new Terminal(80, 24);
+
+        term.on('data', function(data) {
+          term.write(data);
+        });
+        term.open();
+
+      }, 1000);
