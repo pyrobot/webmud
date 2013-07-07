@@ -5,6 +5,8 @@ path = require 'path'
 fs = require 'fs'
 sockjs = require 'sockjs'
 
+mudHandler = require './mud/handler'
+
 app = express()
 
 app.configure ->
@@ -17,9 +19,7 @@ app.configure ->
   app.use express.methodOverride()
   app.use app.router
 
-app.get '/', (req, res) ->
-  res.render 'index'
-
+app.get '/', (req, res) -> res.render 'index'
 
 readFile = (fileName) ->
   try
@@ -28,7 +28,6 @@ readFile = (fileName) ->
     file = null
   finally
     return file
-
 
 app.get '/lib/:scriptName.js', (req, res) ->
   res.contentType 'application/javascript'
@@ -41,22 +40,16 @@ app.get '/scripts/:scriptName.js', (req, res) ->
   file = readFile "www/scripts/#{req.params.scriptName}.coffee"
   unless file is null then res.send(200, coffeescript.compile file) else res.send(404)
 
-
-app.use (req, res) ->
-  res.redirect '/'
-
+# final fallback route redirects back to main
+app.use (req, res) -> res.redirect '/'
 
 server = http.createServer app
 
-echo = sockjs.createServer()
+websocketServer = sockjs.createServer()
 
-echo.on 'connection', (conn) ->
-  conn.on 'data', (message) ->
-    conn.write message
+websocketServer.on 'connection', mudHandler
 
-  conn.on 'close', ->
-
-echo.installHandlers server, prefix: '/echo'
+websocketServer.installHandlers server, prefix: '/ws'
 
 port = app.get 'port'
 
