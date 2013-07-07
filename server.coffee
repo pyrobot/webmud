@@ -5,7 +5,8 @@ path = require 'path'
 fs = require 'fs'
 sockjs = require 'sockjs'
 
-mudHandler = require './mud/handler'
+Mud = require './mud/Mud'
+mud = new Mud()
 
 app = express()
 
