@@ -19,16 +19,33 @@ app.configure ->
 app.get '/', (req, res) ->
   res.render 'index'
 
+
+readFile = (fileName) ->
+  try
+    console.log "Looking for #{path.join(__dirname, fileName)}"
+    file = fs.readFileSync(path.join(__dirname, fileName), 'utf8')
+  catch error
+    console.log error
+    file = null
+  finally
+    return file
+
+
+app.get '/lib/:scriptName.js', (req, res) ->
+  res.contentType 'application/javascript'
+  file = readFile "www/lib/#{req.params.scriptName}.js"
+  unless file is null then res.send(200, file) else res.send(404)
+
+
 app.get '/scripts/:scriptName.js', (req, res) ->
   res.contentType 'application/javascript'
-  res.send 200, coffeescript.compile fs.readFileSync(
-    path.join __dirname, "www/scripts/#{req.params.scriptName}.coffee"
-  , 'utf8')
-
+  file = readFile "www/scripts/#{req.params.scriptName}.coffee"
+  unless file is null then res.send(200, coffeescript.compile file) else res.send(404)
 
 
 app.use (req, res) ->
   res.redirect '/'
+
 
 server = http.createServer app
 
