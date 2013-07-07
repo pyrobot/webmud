@@ -3,6 +3,7 @@ express = require 'express'
 coffeescript = require 'coffee-script'
 path = require 'path'
 fs = require 'fs'
+sockjs = require 'sockjs'
 
 app = express()
 
@@ -46,6 +47,16 @@ app.use (req, res) ->
 
 
 server = http.createServer app
+
+echo = sockjs.createServer()
+
+echo.on 'connection', (conn) ->
+  conn.on 'data', (message) ->
+    conn.write message
+
+  conn.on 'close', ->
+
+echo.installHandlers server, prefix: '/echo'
 
 port = app.get 'port'
 

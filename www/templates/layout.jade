@@ -2,9 +2,15 @@
 html
   head
     title WebMUD REVIVAL
+    script(src='/lib/sockjs.js')
     script(src='/lib/term.js')
+    script(src='/lib/jquery.js')
     script(src='/scripts/app.js')
-    style
+    style.
+      body {
+        background: #000;
+      }
+
       h1 {
         margin-bottom: 20px;
         font: 20px/1.5 sans-serif;
@@ -25,13 +31,3 @@ html
       }
   body
     block content
-    script
-      setTimeout(function() {
-        var term = new Terminal(80, 24);
-
-        term.on('data', function(data) {
-          term.write(data);
-        });
-        term.open();
-
-      }, 1000);
