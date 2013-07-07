@@ -22,10 +22,8 @@ app.get '/', (req, res) ->
 
 readFile = (fileName) ->
   try
-    console.log "Looking for #{path.join(__dirname, fileName)}"
     file = fs.readFileSync(path.join(__dirname, fileName), 'utf8')
   catch error
-    console.log error
     file = null
   finally
     return file
