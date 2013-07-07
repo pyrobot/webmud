@@ -13,7 +13,8 @@ module.exports = class User
           @conn.write "\r\n"
 
       when keycode is 127 
-        if len = @currentCmd.length > 0
+        len = @currentCmd.length
+        if len > 0
           @currentCmd = @currentCmd.substr 0, len-1
           @write '\b \b'
 
