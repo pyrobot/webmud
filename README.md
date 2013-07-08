@@ -17,7 +17,7 @@ Start the MUD server with
 	
 	node app
 
-Then open your browser to http://localhost:3000
+Then open your browser to [http://localhost:3000](http://localhost:3000)
 	
 ###Database
 
@@ -29,6 +29,6 @@ If you are running mongodb locally, you can use
 
 	mongodb://localhost/webmud
 
-This connection string will then be saved to the filesystem as **_dbconfig.json_**
+This connection string will then be saved to the filesystem as `dbconfig.json`
 
 
