@@ -3,7 +3,7 @@ $ ->
   sock = new SockJS('/ws')
 
   sock.onopen = ->
-    term.write 'Connected to echo server.\r\n'
+    term.write 'Connected to MUD server.\r\n'
 
   sock.onmessage = (e) ->
     term.write e.data

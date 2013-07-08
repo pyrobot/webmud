@@ -1,10 +1,21 @@
+User = require './User'
+states = require './states'
+
 module.exports = class Mud
   users: []
 
-  addUser: (user) ->
+  addUser: (conn) ->
+    user = new User(conn, this, 'login')
+
     @users.push user
-    console.log "User Connected.. Currently connected (#{@users.length})"
+
     user.conn.on 'close', =>
       index = @users.indexOf user
       @users.splice index, 1
-      console.log "User Disconnected.. Currently connected (#{@users.length})"
+
+  broadcast: (msg, skipUser) ->
+    for user in @users
+      unless user is skipUser or user.state isnt 'main'
+        user.write "\r                                                                                                                              \r#{msg}\r\n>#{user.currentCmd}"
+
+  states: states

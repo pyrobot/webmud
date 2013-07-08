@@ -1,17 +1,16 @@
 module.exports = class User
-  constructor: (@conn) ->
+  constructor: (@conn, @mud, state) ->
     conn.on 'data', (message) => @keyhandler(message.charCodeAt(0))
-    @currentCmd = ""
+    @changeState state
+
+  currentCmd: ""
 
   keyhandler: (keycode) =>
     switch
-      when keycode is 13
-        if @currentCmd.length > 0
-          @conn.write "\r\nYou entered: '#{@currentCmd}'\r\n"
-          @currentCmd = ""
-        else
-          @conn.write "\r\n"
-
+      when keycode is 13 
+        @mud.states[@state].process this
+        @currentCmd = ""
+        
       when keycode is 127 
         len = @currentCmd.length
         if len > 0
@@ -24,3 +23,7 @@ module.exports = class User
         @write key
 
   write: (d) -> @conn.write d
+
+  changeState: (newState) ->
+    @state = newState
+    @mud.states[@state].enter this 

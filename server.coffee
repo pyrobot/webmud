@@ -48,7 +48,7 @@ server = http.createServer app
 
 websocketServer = sockjs.createServer()
 
-websocketServer.on 'connection', mudHandler
+websocketServer.on 'connection', (conn) -> mud.addUser conn
 
 websocketServer.installHandlers server, prefix: '/ws'
 

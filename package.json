@@ -1,6 +1,6 @@
 {
   "name": "webmud",
-  "version": "0.0.0-6",
+  "version": "0.0.0-9",
   "description": "",
   "main": "server.coffee",
   "scripts": {
