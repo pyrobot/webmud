@@ -19,3 +19,7 @@ $ ->
     width = $window.width()
     height = $window.height()
     term.resize(Math.floor(width / 7), Math.floor(height / 14))
+
+  $('.github-button').on 'click', ->
+    window.open 'https://github.com/pyrobot/webmud-revival'
+  

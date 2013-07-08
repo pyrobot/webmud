@@ -4,6 +4,7 @@ coffeescript = require 'coffee-script'
 fs = require 'fs'
 sockjs = require 'sockjs'
 stylus = require 'stylus'
+nib = require 'nib'
 
 Mud = require './Mud'
 mud = new Mud()
@@ -42,7 +43,7 @@ app.get '/scripts/:scriptName.js', (req, res) ->
 app.get '/css/:styleName.css', (req, res) ->
   res.contentType 'text/css'
   file = readFile "../www/styl/#{req.params.styleName}.styl"
-  unless file is null then res.send(200, stylus(file).render()) else res.send(404)
+  unless file is null then res.send(200, stylus(file).use(nib()).render()) else res.send(404)
 
 # final fallback route redirects back to main
 app.use (req, res) -> res.redirect '/'

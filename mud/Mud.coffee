@@ -11,7 +11,7 @@ module.exports = class Mud
   users: []
 
   addUser: (conn) ->
-    user = new User(conn, this, 'login')
+    user = new User(conn, this, 'connect')
 
     @users.push user
     console.log "New user connected (#{@users.length} total)"
