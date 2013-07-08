@@ -5,7 +5,16 @@ module.exports =
 
   login:
     enter: (user) ->
-      user.write "Enter your name: "
+      user.write "
+\r\n _       _         _             _   _  ___   
+\r\n( )  _  ( )       ( )    /'\\_/`\\( ) ( )(  _`\\ 
+\r\n| | ( ) | |   __  | |_   |     || | | || | ) |
+\r\n| | | | | | /'__`\\| '_`\\ | (_) || | | || | | )
+\r\n| (_/ \\_) |(  ___/| |_) )| | | || (_) || |_) |
+\r\n`\\___x___/'`\\____)(_,__/'(_) (_)(_____)(____/'
+\r\n-=-=-=-=-=============================%%***>>---                                                                                     
+\r\n"
+      user.write "Enter your username: "
 
     process: (user) ->
       if user.currentCmd.length > 0
@@ -14,7 +23,7 @@ module.exports =
         if name.length < 3 or name.length > 12
           user.write "\r\nName must be between 3 to 12 characters.\r\nEnter your name: "
         else unless (/^[a-zA-Z]+$/).exec(name)
-          user.write "\r\nName contains invalid characters.\r\nEnter your name: "
+          user.write "\r\nName contains invalid characters.\r\nEnter your username: "
         else
           query = user.mud.db.User.findOne({name: name})
 
