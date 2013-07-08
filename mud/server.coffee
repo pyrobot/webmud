@@ -3,6 +3,7 @@ express = require 'express'
 coffeescript = require 'coffee-script'
 fs = require 'fs'
 sockjs = require 'sockjs'
+stylus = require 'stylus'
 
 Mud = require './Mud'
 mud = new Mud()
@@ -18,6 +19,7 @@ app.configure ->
   app.use express.bodyParser()
   app.use express.methodOverride()
   app.use app.router
+  app.locals appTitle: "WebMUD Revival!"
 
 app.get '/', (req, res) -> res.render 'index'
 
@@ -36,6 +38,11 @@ app.get '/scripts/:scriptName.js', (req, res) ->
   res.contentType 'application/javascript'
   file = readFile "../www/scripts/#{req.params.scriptName}.coffee"
   unless file is null then res.send(200, coffeescript.compile file) else res.send(404)
+
+app.get '/css/:styleName.css', (req, res) ->
+  res.contentType 'text/css'
+  file = readFile "../www/styl/#{req.params.styleName}.styl"
+  unless file is null then res.send(200, stylus(file).render()) else res.send(404)
 
 # final fallback route redirects back to main
 app.use (req, res) -> res.redirect '/'

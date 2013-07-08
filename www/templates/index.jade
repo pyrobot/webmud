@@ -1,5 +1,14 @@
 extends layout
-  
+
+block scripts
+  script(src='/lib/sockjs.js')
+  script(src='/lib/term.js')
+  script(src='/lib/jquery.js')
+  script(src='/scripts/app.js')
+
+block styles
+  link(rel="stylesheet",href="/css/app.css")
+
 block content
   .header
   .sidebar

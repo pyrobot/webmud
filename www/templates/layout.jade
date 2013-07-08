@@ -1,33 +1,8 @@
 !!!5
 html
   head
-    title WebMUD REVIVAL
-    script(src='/lib/sockjs.js')
-    script(src='/lib/term.js')
-    script(src='/lib/jquery.js')
-    script(src='/scripts/app.js')
-    style.
-      body {
-        background: #000;
-      }
-
-      h1 {
-        margin-bottom: 20px;
-        font: 20px/1.5 sans-serif;
-      }
-
-      .terminal {
-        float: left;
-        border: #000 solid 5px;
-        font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
-        font-size: 11px;
-        color: #f0f0f0;
-        background: #000;
-      }
-
-      .reverse-video {
-        color: #000;
-        background: #f0f0f0;
-      }
+    title= appTitle
+    block scripts
+    block styles
   body
     block content
