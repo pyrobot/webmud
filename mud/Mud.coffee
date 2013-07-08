@@ -14,10 +14,14 @@ module.exports = class Mud
     user = new User(conn, this, 'login')
 
     @users.push user
+    console.log "New user connected (#{@users.length} total)"
 
-    user.conn.on 'close', =>
-      index = @users.indexOf user
-      @users.splice index, 1
+    user.conn.on 'close', => @removeUser user
+
+  removeUser: (user) ->
+    index = @users.indexOf user
+    @users.splice index, 1
+    console.log "User #{user.name || user.confirmName || ''} disconnected (#{@users.length} total)"
 
   broadcast: (msg, skipUser) ->
     for user in @users

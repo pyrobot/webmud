@@ -136,6 +136,7 @@ module.exports =
   goodbye:
     enter: (user) ->
       user.write "\r\nGoodbye!\r\n"
+      user.conn.end()
       user.echo = 'none'
     process: (user) ->
       # ignores input
