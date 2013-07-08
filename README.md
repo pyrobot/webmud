@@ -16,6 +16,10 @@ Clone the repo, and install it's dependencies
 Start the MUD server with
 	
 	node app
+
+Open your browser to
+	
+	http://localhost:3000
 	
 ###Database
 
