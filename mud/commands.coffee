@@ -17,3 +17,6 @@ module.exports = commands =
     for u, i in allUsers
       user.write "\t ##{i+1}: #{u.name}\r\n"
     user.write ">"
+
+  logoff: (user, args) ->
+    user.changeState 'goodbye'

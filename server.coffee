@@ -23,12 +23,10 @@ app.configure ->
 app.get '/', (req, res) -> res.render 'index'
 
 readFile = (fileName) ->
-  try
-    file = fs.readFileSync(path.join(__dirname, fileName), 'utf8')
-  catch error
-    file = null
-  finally
-    return file
+  file = null
+  location = path.join(__dirname, fileName)
+  if fs.existsSync(location) then file = fs.readFileSync(location, 'utf8')
+  return file
 
 app.get '/lib/:scriptName.js', (req, res) ->
   res.contentType 'application/javascript'
@@ -54,4 +52,5 @@ websocketServer.installHandlers server, prefix: '/ws'
 
 port = app.get 'port'
 
-server.listen port, -> console.log "Server started on port #{port}"
+mud.start ->
+  server.listen port, -> console.log "Server started on port #{port}"

@@ -1,9 +1,11 @@
 module.exports = class User
+
   constructor: (@conn, @mud, state) ->
     conn.on 'data', (message) => @keyhandler(message.charCodeAt(0))
     @changeState state
 
   currentCmd: ""
+  echo: "full"
 
   keyhandler: (keycode) =>
     switch
@@ -20,7 +22,14 @@ module.exports = class User
       when keycode >= 32 and keycode <= 126
         key = String.fromCharCode keycode
         @currentCmd += key
-        @write key
+
+        switch @echo
+          when 'full'
+            @write key
+          when 'none'
+            # do nothing
+          else
+            @write @echo
 
   write: (d) -> @conn.write d
 
