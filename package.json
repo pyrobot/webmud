@@ -1,11 +1,9 @@
 {
   "name": "webmud",
-  "version": "0.0.0-11",
-  "description": "",
-  "main": "server.coffee",
+  "version": "0.0.0-21",
+  "description": "A MUD written in CoffeeScript, with an HTML5 WebSockets interface, and MongoDB back-end.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "server.coffee"
+    "start": "app.js"
   },
   "repository": "https://github.com/pyrobot/webmud-revival",
   "author": "pyrobot",

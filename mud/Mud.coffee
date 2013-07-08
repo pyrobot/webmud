@@ -1,5 +1,4 @@
 fs = require 'fs'
-path = require 'path'
 Db = require './Db'
 User = require './User'
 states = require './states'
@@ -37,7 +36,7 @@ module.exports = class Mud
         @db.defineSchemas(mongoose)
         callback()
 
-    location = path.join(__dirname, '../dbconfig.json')
+    location = 'dbconfig.json'
 
     if fs.existsSync(location)
       dbconfig = JSON.parse(fs.readFileSync(location, 'utf8'))
@@ -52,4 +51,3 @@ module.exports = class Mud
         dbconfig = mongodb: d.replace('\n', '')
         fs.writeFileSync location, JSON.stringify(dbconfig)
         connectDb(dbconfig)
-
