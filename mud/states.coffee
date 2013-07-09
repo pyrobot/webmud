@@ -1,32 +1,33 @@
 commands = require './commands'
 bcrypt = require 'bcrypt'
+c = require './colors'
 
 module.exports = states =
   connect:
     enter: (user) ->
       user.write "
-      \r\n\x1b[0m _       _         _             _   _  ___   
+      \r\n #{c[40]}_       _         _             _   _  ___   
       \r\n( )  _  ( )       ( )    /'\\_/`\\( ) ( )(  _`\\ 
       \r\n| | ( ) | |   __  | |_   |     || | | || | ) |
       \r\n| | | | | | /'__`\\| '_`\\ | (_) || | | || | | )
       \r\n| (_/ \\_) |(  ___/| |_) )| | | || (_) || |_) |
       \r\n`\\___x___/'`\\____)(_,__/'(_) (_)(_____)(____/'
-      \r\n-=-=-=-=-=============================%%***>>---                                                                                     
+      \r\n#{c[240]}-=-=-=-=-=============================#{c[253]}%%#{c[239]}***#{c[160]}>#{c[239]}>#{c[249]}---                                                                                     
       \r\n"
       user.changeState 'login'
 
   login:
     enter: (user) ->
-      user.write "Enter your username: "
+      user.write "#{c[249]}Enter your #{c[255]}username#{c[249]}: "
 
     process: (user) ->
       if user.currentCmd.length > 0
         name = user.currentCmd.split(' ')[0]
         name = name[0...1].toUpperCase() + name[1..].toLowerCase()
         if name.length < 3 or name.length > 12
-          user.write "\r\nName must be between 3 to 12 characters.\r\nEnter your name: "
+          user.write "\r\nName must be between #{c[226]}3#{c[249]} to #{c[226]}12#{c[249]} characters.\r\nEnter your #{c[255]}username#{c[249]}: "
         else unless (/^[a-zA-Z]+$/).exec(name)
-          user.write "\r\nName contains invalid characters.\r\nEnter your username: "
+          user.write "\r\nName contains #{c[196]}invalid characters#{c[249]}.\r\nEnter your #{c[255]}username#{c[249]}: "
         else
           query = user.mud.db.User.findOne({name: name})
 
@@ -39,11 +40,11 @@ module.exports = states =
               user.changeState 'confirm'
 
       else
-        user.write "\r\nEnter your name: "
+        user.write "\r\n#{c[249]}Enter your #{c[255]}username#{c[249]}: "
 
   password:
     enter: (user) ->
-      user.write "\r\nEnter your Password: "
+      user.write "\r\n#{c[249]}Enter your #{c[255]}password#{c[249]}: "
       user.echo = '*'
       user.badPassword = 0
 
@@ -58,18 +59,18 @@ module.exports = states =
           user.badPassword++
 
           if user.badPassword >= 3
-            user.write "\r\nInvalid password.\r\nToo many invalid password attempts."
+            user.write "\r\n#{c[196]}Invalid password.\r\n#{c[226]}Too many invalid password attempts."
             user.changeState 'goodbye'
           else
-            user.write "\r\nInvalid password.\r\nEnter your Password: "
+            user.write "\r\n#{c[196]}Invalid password.\r\n#{c[249]}Enter your #{c[255]}password#{c[249]}: "
 
 
       else
-        user.write "\r\nEnter your Password: "
+        user.write "\r\n#{c[249]}Enter your #{c[255]}password#{c[249]}: "
 
   confirm:
     enter: (user) ->
-      user.write "\r\nUser '#{user.confirmName}' does not exist, create? (Y/N) "
+      user.write "\r\n#{c[249]}User '#{c[255]}#{user.confirmName}#{c[249]}' does not exist, create? (#{c[34]}Y#{c[249]}/#{c[124]}N#{c[249]}) "
 
     process: (user) ->
       if user.currentCmd.length > 0
@@ -82,15 +83,15 @@ module.exports = states =
           user.write '\r\n'
           user.changeState 'login'
         else
-          user.write "\r\nPlease enter Y or N.\r\nUser '#{user.confirmName}' does not exist, create? (Y/N) "
+          user.write "\r\n#{c[249]}Please enter #{c[34]}Y#{c[249]} or #{c[124]}N#{c[249]}.\r\n#{c[249]}User '#{c[255]}#{user.confirmName}#{c[249]}' does not exist, create? (#{c[34]}Y#{c[249]}/#{c[124]}N#{c[249]}) "
 
       else
-        user.write "\r\nUser '#{user.confirmName}' does not exist, create? (Y/N) "
+        user.write "\r\n#{c[249]}User '#{c[255]}#{user.confirmName}#{c[249]}' does not exist, create? (#{c[34]}Y#{c[249]}/#{c[124]}N#{c[249]}) "
 
 
   createpw:
     enter: (user) ->
-      user.write "\r\nEnter a password: "
+      user.write "\r\n#{c[249]}Enter a #{c[255]}password#{c[249]}: "
       user.echo = '*'
 
     process: (user) ->
@@ -98,11 +99,11 @@ module.exports = states =
         user.pass = user.currentCmd
         user.changeState 'confirmpw'
       else
-        user.write "\r\nEnter a password: "
+        user.write "\r\n#{c[249]}Enter a #{c[255]}password#{c[249]}: "
  
   confirmpw: 
     enter: (user) ->
-      user.write "\r\nRe-enter the same password: "
+      user.write "\r\n#{c[249]}Re-enter the same #{c[255]}password#{c[249]}: "
       user.echo = '*'
 
     process: (user) ->
@@ -116,17 +117,17 @@ module.exports = states =
           user.record.save ->
             user.changeState 'main'
         else
-          user.write "\r\nPasswords do not match!"
+          user.write "\r\n#{c[196]}Passwords do not match!"
           user.changeState 'createpw'
 
       else
-        user.write "\r\nRe-enter the same password: "
+        user.write "\r\n#{c[249]}Re-enter the same  #{c[255]}password #{c[249]}: "
 
   main:
     enter: (user) ->
-      user.write "\r\nWelcome, #{user.name}!\r\n"
-      user.write "You have entered the realm.\r\n"
-      user.mud.broadcast "#{user.name} has entered the realm.", user
+      user.write "\r\n#{c[249]}Welcome, #{c[255]}#{user.name}#{c[249]}!\r\n"
+      user.write "#{c[255]}#{user.name} has entered the realm.#{c[249]}\r\n"
+      user.mud.broadcast "#{c[255]}#{user.name} has entered the realm.#{c[249]}", user
       user.write ">"
       user.echo = 'full'
       
@@ -139,7 +140,7 @@ module.exports = states =
         if cmd
           cmd user, args[1..]
         else
-          user.write "\r\nInvalid command.. type 'help' for help.\r\n>"       
+          user.write "\r\nInvalid command.. type '#{c[255]}help#{c[249]}' for help.\r\n>"       
 
       else
         user.write "\r\n>"
@@ -147,7 +148,7 @@ module.exports = states =
 
   goodbye:
     enter: (user) ->
-      user.write "\r\nGoodbye!\r\n"
+      user.write "\r\n#{c[226]}Goodbye!\r\n"
       user.conn.end()
       user.echo = 'none'
     process: (user) ->
