@@ -1,0 +1,39 @@
+{
+  "rooms": [{
+    "roomId": 0,
+    "description": "An empty room.",
+    "exits": [{
+      "to": 1,
+      "type": "east"
+      }]
+    },{
+    "roomId": 1,
+    "description": "Another empty room.",
+    "exits": [{
+      "to": 2,
+      "type": "west"
+      }]
+  }],
+  "messages": {
+    "connectBanner": "\r\n*{40} _       _         _             _   _  ___   \r\n( )  _  ( )       ( )    /'\\_/`\\( ) ( )(  _`\\ \r\n| | ( ) | |   __  | |_   |     || | | || | ) |\r\n| | | | | | /'__`\\| '_`\\ | (_) || | | || | | )\r\n| (_/ \\_) |(  ___/| |_) )| | | || (_) || |_) |\r\n`\\___x___/'`\\____)(_,__/'(_) (_)(_____)(____/'\r\n*{240}-=-=-=-=-=============================*{253}%%*{239}****{160}>*{239}>*{249}---                                                                                     \r\n", 
+    "enterUsername": "*{249}Enter your *{255}username*{249}: ",
+    "nameLengthError": "Name must be between *{226}3*{249} to *{226}12*{249} characters.",
+    "invalidCharactersError": "Name contains *{196}invalid characters*{249}.",
+    "enterPassword": "*{249}Enter your *{255}password*{249}: ",
+    "invalidPasswordError": "*{196}Invalid password.",
+    "tooManyAttemptsError": "*{226}Too many invalid password attempts.",
+    "userCreatePrompt": "*{249}User '*{255}%{confirmName}*{249}' does not exist, create? (*{34}Y*{249}/*{124}N*{249}) ",
+    "userCreatePromptError": "*{249}Please enter *{34}Y*{249} or *{124}N*{249}.",
+    "userCreatePasswordPrompt":  "*{249}Enter a *{255}password*{249}: ",
+    "userCreatePasswordReentry": "*{249}Re-enter the same *{255}password*{249}: ",
+    "userCreatePasswordMismatch": "*{196}Passwords do not match!",
+    "mainUserEnterRealm": "*{249}Welcome, *{255}%{name}*{249}!\r\n*{255}%{name} has entered the realm.*{249}\r\n>",
+    "mainUserEnterRealmBroadcast": "*{255}#{name} has entered the realm.*{249}",
+    "mainInvalidCommand": "Invalid command.. type '*{255}help*{249}' for help.",
+    "goodbye": "*{226}Goodbye!"
+  },
+  "commands": {
+    "sayMsgSelf": "*{82}You *{70}say: *{82}%{msg}*{249}",
+    "sayMsgBroadcast": "*{82}#{user.name} *{70}says: *{82}%{msg}*{249}"
+  }
+}

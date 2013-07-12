@@ -1,24 +1,22 @@
-c = require './colors'
-
 module.exports = commands =
 
-  help: (user, args) ->
+  help: (user) ->
     user.write "\r\n    Available commands:\r\n"
     for key, val of commands
       user.write "\t#{key}\r\n"
     user.write ">"
 
-  say: (user, args) ->
-    msg = args.join ' '
-    user.write "\r\n#{c[82]}You #{c[70]}say: #{c[82]}#{msg}#{c[249]}\r\n>"
-    user.mud.broadcast "#{c[82]}#{user.name} #{c[70]}says: #{c[82]}#{msg}#{c[249]}", user
+  say: (user) ->
+    user.msg = user.strip user.commandArgs.join ' '
+    user.write "\r\n#{user.mud.config.commands.sayMsgSelf}\r\n>"
+    user.mud.broadcast "#{user.mud.config.commands.sayMsgBroadcast}", user
 
-  who: (user, args) ->
+  who: (user) ->
     allUsers = user.mud.users
-    user.write "\r\nCurrently connected (#{c[255]}#{allUsers.length}#{c[249]})\r\n"
+    user.write "\r\nCurrently connected (*{255}#{allUsers.length}*{249})\r\n"
     for u, i in allUsers
-      user.write "\t ##{i+1}: #{c[255]}#{u.name}#{c[249]}\r\n"
+      user.write "\t ##{i+1}: *{255}#{u.name}*{249}\r\n"
     user.write ">"
 
-  logoff: (user, args) ->
+  logoff: (user) ->
     user.changeState 'goodbye'

@@ -1,6 +1,9 @@
+Parser = require './Parser'
+
 module.exports = class User
 
   constructor: (@conn, @mud, state) ->
+    @parser = new Parser(this)
     conn.on 'data', (message) => @keyhandler(message.charCodeAt(0))
     @changeState state
 
@@ -31,7 +34,8 @@ module.exports = class User
           else
             @write @echo
 
-  write: (d) -> @conn.write d
+  write: (d) -> @conn.write @parser.parse d
+  strip: (d) -> @parser.strip d
 
   changeState: (newState) ->
     @state = newState

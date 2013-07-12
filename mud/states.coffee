@@ -1,33 +1,24 @@
 commands = require './commands'
 bcrypt = require 'bcrypt'
-c = require './colors'
 
 module.exports = states =
   connect:
     enter: (user) ->
-      user.write "
-      \r\n #{c[40]}_       _         _             _   _  ___   
-      \r\n( )  _  ( )       ( )    /'\\_/`\\( ) ( )(  _`\\ 
-      \r\n| | ( ) | |   __  | |_   |     || | | || | ) |
-      \r\n| | | | | | /'__`\\| '_`\\ | (_) || | | || | | )
-      \r\n| (_/ \\_) |(  ___/| |_) )| | | || (_) || |_) |
-      \r\n`\\___x___/'`\\____)(_,__/'(_) (_)(_____)(____/'
-      \r\n#{c[240]}-=-=-=-=-=============================#{c[253]}%%#{c[239]}***#{c[160]}>#{c[239]}>#{c[249]}---                                                                                     
-      \r\n"
+      user.write user.mud.config.messages.connectBanner
       user.changeState 'login'
 
   login:
     enter: (user) ->
-      user.write "#{c[249]}Enter your #{c[255]}username#{c[249]}: "
+      user.write user.mud.config.messages.enterUsername
 
     process: (user) ->
       if user.currentCmd.length > 0
         name = user.currentCmd.split(' ')[0]
         name = name[0...1].toUpperCase() + name[1..].toLowerCase()
         if name.length < 3 or name.length > 12
-          user.write "\r\nName must be between #{c[226]}3#{c[249]} to #{c[226]}12#{c[249]} characters.\r\nEnter your #{c[255]}username#{c[249]}: "
+          user.write "\r\n#{user.mud.config.messages.nameLengthError}\r\n#{user.mud.config.messages.enterUsername}"
         else unless (/^[a-zA-Z]+$/).exec(name)
-          user.write "\r\nName contains #{c[196]}invalid characters#{c[249]}.\r\nEnter your #{c[255]}username#{c[249]}: "
+          user.write "\r\n#{user.mud.config.messages.invalidCharactersError}\r\n#{user.mud.config.messages.enterUsername}"
         else
           query = user.mud.db.User.findOne({name: name})
 
@@ -40,11 +31,11 @@ module.exports = states =
               user.changeState 'confirm'
 
       else
-        user.write "\r\n#{c[249]}Enter your #{c[255]}username#{c[249]}: "
+        user.write "\r\n#{user.mud.config.messages.enterUsername}"
 
   password:
     enter: (user) ->
-      user.write "\r\n#{c[249]}Enter your #{c[255]}password#{c[249]}: "
+      user.write "\r\n#{user.mud.config.messages.enterPassword}"
       user.echo = '*'
       user.badPassword = 0
 
@@ -59,18 +50,18 @@ module.exports = states =
           user.badPassword++
 
           if user.badPassword >= 3
-            user.write "\r\n#{c[196]}Invalid password.\r\n#{c[226]}Too many invalid password attempts."
+            user.write "\r\n#{user.mud.config.messages.invalidPasswordError}\r\n#{user.mud.config.messages.tooManyAttemptsError}"
             user.changeState 'goodbye'
           else
-            user.write "\r\n#{c[196]}Invalid password.\r\n#{c[249]}Enter your #{c[255]}password#{c[249]}: "
+            user.write "\r\n#{user.mud.config.messages.invalidPasswordError}\r\n#{c[249]}#{user.mud.config.messages.enterPassword}"
 
 
       else
-        user.write "\r\n#{c[249]}Enter your #{c[255]}password#{c[249]}: "
+        user.write "\r\n#{user.mud.config.messages.enterPassword}"
 
   confirm:
     enter: (user) ->
-      user.write "\r\n#{c[249]}User '#{c[255]}#{user.confirmName}#{c[249]}' does not exist, create? (#{c[34]}Y#{c[249]}/#{c[124]}N#{c[249]}) "
+      user.write "\r\n#{user.mud.config.messages.userCreatePrompt}"
 
     process: (user) ->
       if user.currentCmd.length > 0
@@ -83,15 +74,15 @@ module.exports = states =
           user.write '\r\n'
           user.changeState 'login'
         else
-          user.write "\r\n#{c[249]}Please enter #{c[34]}Y#{c[249]} or #{c[124]}N#{c[249]}.\r\n#{c[249]}User '#{c[255]}#{user.confirmName}#{c[249]}' does not exist, create? (#{c[34]}Y#{c[249]}/#{c[124]}N#{c[249]}) "
+          user.write "\r\n#{user.mud.config.messages.userCreatePromptError}\r\n#{userCreatePrompt}"
 
       else
-        user.write "\r\n#{c[249]}User '#{c[255]}#{user.confirmName}#{c[249]}' does not exist, create? (#{c[34]}Y#{c[249]}/#{c[124]}N#{c[249]}) "
+        user.write "\r\n#{userCreatePrompt}"
 
 
   createpw:
     enter: (user) ->
-      user.write "\r\n#{c[249]}Enter a #{c[255]}password#{c[249]}: "
+      user.write "\r\n#{user.mud.config.messages.userCreatePasswordPrompt}"
       user.echo = '*'
 
     process: (user) ->
@@ -99,11 +90,11 @@ module.exports = states =
         user.pass = user.currentCmd
         user.changeState 'confirmpw'
       else
-        user.write "\r\n#{c[249]}Enter a #{c[255]}password#{c[249]}: "
+        user.write "\r\n#{user.mud.config.messages.userCreatePasswordPrompt}"
  
   confirmpw: 
     enter: (user) ->
-      user.write "\r\n#{c[249]}Re-enter the same #{c[255]}password#{c[249]}: "
+      user.write "\r\n#{user.mud.config.messages.userCreatePasswordReentry}"
       user.echo = '*'
 
     process: (user) ->
@@ -117,38 +108,37 @@ module.exports = states =
           user.record.save ->
             user.changeState 'main'
         else
-          user.write "\r\n#{c[196]}Passwords do not match!"
+          user.write "\r\n#{user.mud.config.messages.userCreatePasswordMismatch}"
           user.changeState 'createpw'
 
       else
-        user.write "\r\n#{c[249]}Re-enter the same  #{c[255]}password #{c[249]}: "
+        user.write "\r\n#{user.mud.config.messages.userCreatePasswordReentry}"
 
   main:
     enter: (user) ->
-      user.write "\r\n#{c[249]}Welcome, #{c[255]}#{user.name}#{c[249]}!\r\n"
-      user.write "#{c[255]}#{user.name} has entered the realm.#{c[249]}\r\n"
-      user.mud.broadcast "#{c[255]}#{user.name} has entered the realm.#{c[249]}", user
-      user.write ">"
+      debugger
+      user.write "\r\n#{user.mud.config.messages.mainUserEnterRealm}"
+      user.mud.broadcast "#{user.mud.config.messages.mainUserEnterRealmBroadcast}", user
       user.echo = 'full'
       
     process: (user) ->
       if user.currentCmd.length > 0
         args = user.currentCmd.split ' '
-        user.currentCmd = ""
         cmd = commands[args[0].toLowerCase()]
-
+        user.commandArgs = args[1..]
         if cmd
-          cmd user, args[1..]
+          cmd user
         else
-          user.write "\r\nInvalid command.. type '#{c[255]}help#{c[249]}' for help.\r\n>"       
+          user.write "\r\n#{user.mud.config.messages.mainInvalidCommand}\r\n>"       
+        user.currentCmd = ''
+        user.commandArgs = ''
 
       else
         user.write "\r\n>"
 
-
   goodbye:
     enter: (user) ->
-      user.write "\r\n#{c[226]}Goodbye!\r\n"
+      user.write "\r\n#{user.mud.config.messages.goodbye}\r\n"
       user.conn.end()
       user.echo = 'none'
     process: (user) ->
