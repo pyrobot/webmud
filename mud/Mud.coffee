@@ -5,11 +5,16 @@ states = require './states'
 mongoose = require 'mongoose'
 colors = require './colors'
 
+Entity = require './Entity'
+Room = require './Room'
+
 module.exports = class Mud
 
   db: new Db()
 
+  rooms: []
   users: []
+  entities: []
 
   addUser: (conn) ->
     user = new User(conn, this, 'connect')
@@ -43,32 +48,35 @@ module.exports = class Mud
         query.exec (err, foundConfig) =>
           if (foundConfig)
             @config = foundConfig
-            callback()
+            @init(callback)
           else
             console.log "mudconfig not found"
+            loadMudconfig()
       
-            process.stdout.write 'Enter location to import mudconfig: '
-            process.stdin.resume()
-            process.stdin.setEncoding 'utf8'
-            process.stdin.on 'data', (d) =>
-              location = d.replace('\n', '')
+    loadMudconfig = =>
+      process.stdout.write 'Enter location to import mudconfig: '
+      process.stdin.resume()
+      process.stdin.setEncoding 'utf8'
+      process.stdin.on 'data', (d) =>
+        location = d.replace('\n', '')
 
-              if fs.existsSync(location)
-                @config = new @db.Config()
-                mudconfig = JSON.parse(fs.readFileSync(location, 'utf8'))
+        if fs.existsSync(location)
+          @config = new @db.Config()
+          mudconfig = JSON.parse(fs.readFileSync(location, 'utf8'))
 
-                for key, val of mudconfig
-                  @config[key] = mudconfig[key]
+          for key, val of mudconfig
+            @config[key] = mudconfig[key]
 
-                @config.save ->
-                  process.stdin.pause()
-                  process.stdin.removeAllListeners('data')
-                  callback()
-              else
-                process.stdout.write 'File not found.\nEnter location to import mudconfig: '
+          @config.save ->
+            process.stdin.pause()
+            process.stdin.removeAllListeners('data')
+            callback()
+        else
+          process.stdout.write 'File not found.\nEnter location to import mudconfig: '
 
-    if fs.existsSync('dbconfig.json')
-      dbconfig = JSON.parse(fs.readFileSync('dbconfig.json', 'utf8'))
+    location = './config/dbconfig.json'
+    if fs.existsSync(location)
+      dbconfig = JSON.parse(fs.readFileSync(location, 'utf8'))
       connectDb(dbconfig)
     else
       console.log 'dbconfig not found'
@@ -82,3 +90,12 @@ module.exports = class Mud
         dbconfig = mongodb: d.replace('\n', '')
         fs.writeFileSync location, JSON.stringify(dbconfig)
         connectDb(dbconfig)
+
+  init: (callback) ->
+    for room in @config.rooms
+      @rooms.push new Room(room.roomId, room.description, room.exits)
+
+    for entity in @config.entities
+      @entities.push new Entity(entity.entityId, entity.name, entity.type, entity.gender)
+
+    callback()

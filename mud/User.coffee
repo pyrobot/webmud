@@ -3,7 +3,7 @@ Parser = require './Parser'
 module.exports = class User
 
   constructor: (@conn, @mud, state) ->
-    @parser = new Parser(this)
+    @parser = new Parser()
     conn.on 'data', (message) => @keyhandler(message.charCodeAt(0))
     @changeState state
 
@@ -40,3 +40,7 @@ module.exports = class User
   changeState: (newState) ->
     @state = newState
     @mud.states[@state].enter this 
+
+  update: ->
+    @record.save ->
+      console.log 'updated'
