@@ -23,7 +23,6 @@ module.exports = commands =
     user.write "\r\nUpdated!\r\n>"
 
   stat: (user) ->
-    debugger
     user.write "\r\nYou are a #{user.entity.type}.\r\n>"
 
   logoff: (user) ->

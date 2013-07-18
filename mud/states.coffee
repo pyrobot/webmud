@@ -5,8 +5,8 @@ _ = require 'underscore'
 module.exports = states =
   connect:
     enter: (user) ->
-      user.write "
-\r\n*{40} _       _         _             _   _  ___
+      user.write "*{40}
+\r\n _       _         _             _   _  ___
 \r\n( )  _  ( )       ( )    /'\\_/`\\( ) ( )(  _`\\ 
 \r\n| | ( ) | |   __  | |_   |     || | | || | ) |
 \r\n| | | | | | /'__`\\| '_`\\ | (_) || | | || | | )
@@ -32,6 +32,8 @@ module.exports = states =
           query = user.mud.db.User.findOne({name: name})
 
           query.exec (err, foundUser) ->
+            if err
+              return console.log "DB Err: " + err
             if foundUser
               user.foundUser = foundUser
               user.changeState 'password'
