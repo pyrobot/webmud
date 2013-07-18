@@ -2,8 +2,6 @@ colors = require './colors'
 
 module.exports = class Parser
 
-  constructor: (@expressionTarget) ->
-
   colorRegex: /\*{(.*?)}/
   parseColor: (str, strip) ->
     str = str or ""
