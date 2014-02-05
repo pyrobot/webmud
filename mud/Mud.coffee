@@ -6,7 +6,7 @@ states = require './states'
 mongoose = require 'mongoose'
 colors = require './colors'
 
-Entity = require './Entity'
+EntityManager = require './EntityManager'
 Room = require './Room'
 
 child_process = require 'child_process'
@@ -16,8 +16,9 @@ timerJsFilePath = "#{__dirname}/timerShim.js"
 
 module.exports = class Mud
 
-  # create a new instance of the database
+  # create new instances of the database, and entity manager
   db: new Db()
+  em: new EntityManager()
 
   # attach the game states
   states: states
@@ -28,7 +29,6 @@ module.exports = class Mud
   # arrays holding the various mud objects
   rooms: []
   users: []
-  entities: []
 
   addUser: (conn) ->
     user = new User(conn, this, 'connect')
@@ -104,16 +104,20 @@ module.exports = class Mud
         connectDb(dbconfig)
 
   init: (callback) ->
+    # TODO: convert to room manager
     for room in @config.rooms
       @rooms.push new Room(room.roomId, room.description, room.exits)
 
-    for entity in @config.entities
-      @entities.push new Entity(entity.entityId, entity.name, entity.type, entity.gender)
+    # Init entity manager with entity list from config
+    @em.init @config.entities
 
+    # Create timer process in it's own thread
     @timerProcess = child_process.fork timerJsFilePath
     @timerProcess.on 'message', (tick) => @tickUpdate tick
 
+    # Call the callback
     callback() if callback
 
-  tickUpdate: (@currentTick) ->
-    _.each @rooms, (r) -> r.updateTick()
+  tickUpdate: (@currentTick) -> 
+    @em.updateTick()
+    # _.each @rooms, (r) -> r.updateTick()

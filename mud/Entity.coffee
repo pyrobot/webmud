@@ -4,6 +4,8 @@ module.exports = class Entity
 
   displayMsg: (msg) -> @controller?.write msg if @controller
 
+  updateTick: -> console.log 'Entity update'
+
   commands:
     look: ->
       room.look
