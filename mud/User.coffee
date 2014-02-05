@@ -1,4 +1,5 @@
 Parser = require './Parser'
+Entity = require './Entity'
 
 module.exports = class User
 
@@ -9,6 +10,7 @@ module.exports = class User
 
   currentCmd: ""
   echo: "full"
+  record: null
 
   keyhandler: (keycode) =>
     switch
@@ -39,8 +41,12 @@ module.exports = class User
 
   changeState: (newState) ->
     @state = newState
-    @mud.states[@state].enter this 
+    @mud.states[@state].enter this
+
+  createEntity: -> @entity = @mud.entityManager.add @record.entity
 
   update: ->
     @record.save ->
-      console.log 'updated'
+      console.log 'User record updated'
+
+  updateTick: -> console.log 'User tick update'
