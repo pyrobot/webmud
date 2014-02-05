@@ -10,10 +10,11 @@ module.exports =
   process: (user) ->
     if user.currentCmd.length > 0
       args = user.currentCmd.split ' '
-      cmd = commands[args[0].toLowerCase()]
-      user.commandArgs = args[1..]
+      firstArg = args[0].toLowerCase()
+      cmd = commands[firstArg] or user.entity.commands[firstArg]
+      commandArgs = args[1..]
       if cmd
-        cmd user
+        cmd user, commandArgs
       else
         user.write "\r\nInvalid command.. type '*{255}help*{249}' for help.\r\n>"       
       user.currentCmd = ''
