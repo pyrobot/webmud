@@ -7,7 +7,7 @@ mongoose = require 'mongoose'
 colors = require './colors'
 
 EntityManager = require './EntityManager'
-Room = require './Room'
+RoomManager = require './RoomManager'
 
 child_process = require 'child_process'
 
@@ -16,9 +16,10 @@ timerJsFilePath = "#{__dirname}/timerShim.js"
 
 module.exports = class Mud
 
-  # create new instances of the database, and entity manager
+  # create new instances of the database, entity manager, and room manager
   db: new Db()
-  em: new EntityManager()
+  entityManager: new EntityManager()
+  roomManager: new RoomManager()
 
   # attach the game states
   states: states
@@ -27,7 +28,6 @@ module.exports = class Mud
   timerProcess: null
 
   # arrays holding the various mud objects
-  rooms: []
   users: []
 
   addUser: (conn) ->
@@ -39,6 +39,7 @@ module.exports = class Mud
     user.conn.on 'close', => @removeUser user
 
   removeUser: (user) ->
+    @entityManager.removeEntity user.entity
     index = @users.indexOf user
     @users.splice index, 1
     console.log "User #{user.name || user.confirmName || ''} disconnected (#{@users.length} total)"
@@ -104,14 +105,11 @@ module.exports = class Mud
         connectDb(dbconfig)
 
   init: (callback) ->
-    # TODO: convert to room manager
-    for room in @config.rooms
-      @rooms.push new Room(room.roomId, room.description, room.exits)
+    # Init room and entity managers
+    @roomManager.init @config.rooms
+    @entityManager.init @config.entities
 
-    # Init entity manager with entity list from config
-    @em.init @config.entities
-
-    # Create timer process in it's own thread
+    # Create timer process
     @timerProcess = child_process.fork timerJsFilePath
     @timerProcess.on 'message', (tick) => @tickUpdate tick
 
@@ -119,5 +117,6 @@ module.exports = class Mud
     callback() if callback
 
   tickUpdate: (@currentTick) -> 
-    @em.updateTick()
+    @entityManager.updateTick()
+    @roomManager.updateTick()
     # _.each @rooms, (r) -> r.updateTick()
