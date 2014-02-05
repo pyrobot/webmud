@@ -1,3 +1,4 @@
+_ = require 'underscore'
 fs = require 'fs'
 Db = require './Db'
 User = require './User'
@@ -8,10 +9,23 @@ colors = require './colors'
 Entity = require './Entity'
 Room = require './Room'
 
+child_process = require 'child_process'
+
+# node hates coffee
+timerJsFilePath = "#{__dirname}/timerShim.js"
+
 module.exports = class Mud
 
+  # create a new instance of the database
   db: new Db()
 
+  # attach the game states
+  states: states
+
+  # reference to timer child process gets created in the init function
+  timerProcess: null
+
+  # arrays holding the various mud objects
   rooms: []
   users: []
   entities: []
@@ -32,10 +46,8 @@ module.exports = class Mud
   broadcast: (msg, skipUser) ->
     for user in @users
       unless user is skipUser or user.state isnt 'main'
-        user.write "\r#{new Array(57).join(' ')}\r#{msg}\r\n>#{user.currentCmd}"
+        user.write "\r#{new Array(57).join(' ')}\r#{msg}\r\n>#{user.currentCmd}"    
 
-  states: states
-    
   start: (callback) ->
     console.log "Starting MUD"
     console.log "Connecting to database"
@@ -46,7 +58,7 @@ module.exports = class Mud
         @db.defineSchemas(mongoose)
         query = @db.Config.findOne({})
         query.exec (err, foundConfig) =>
-          if (foundConfig)
+          if foundConfig
             @config = foundConfig
             @init(callback)
           else
@@ -98,4 +110,10 @@ module.exports = class Mud
     for entity in @config.entities
       @entities.push new Entity(entity.entityId, entity.name, entity.type, entity.gender)
 
-    callback()
+    @timerProcess = child_process.fork timerJsFilePath
+    @timerProcess.on 'message', (tick) => @tickUpdate tick
+
+    callback() if callback
+
+  tickUpdate: (@currentTick) ->
+    _.each @rooms, (r) -> r.updateTick()
