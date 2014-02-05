@@ -10,7 +10,9 @@ module.exports = class EntityManager
 
   add: (entityObject) ->
     @entityIdCtr++
-    @entities.push new Entity(@entityIdCtr, entityObject?.name, entityObject?.type, entityObject?.gender)
+    entity = new Entity(@entityIdCtr, entityObject?.name, entityObject?.type, entityObject?.gender)
+    @entities.push entity
+    return entity
 
   remove: (entityId) -> @removeEntity _.findWhere @entities, entityId: entityId
 
