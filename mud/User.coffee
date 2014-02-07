@@ -4,15 +4,15 @@ Entity = require './Entity'
 module.exports = class User
 
   constructor: (@conn, @mud, state) ->
+    @currentCmd = ""
+    @echo = "full"
+    @record = null
     @parser = new Parser()
+
     conn.on 'data', (message) => @keyhandler(message.charCodeAt(0))
     @changeState state
 
-  currentCmd: ""
-  echo: "full"
-  record: null
-
-  keyhandler: (keycode) =>
+  keyhandler: (keycode) ->
     switch
       when keycode is 13 
         @mud.states[@state].process this
