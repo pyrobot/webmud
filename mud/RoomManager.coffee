@@ -3,7 +3,8 @@ Room = require './Room'
 
 module.exports = class RoomManager
 
-  rooms: []
+  constructor: ->
+  	@rooms = []
 
   init: (roomMaster) ->
     for room in roomMaster
@@ -12,3 +13,5 @@ module.exports = class RoomManager
   updateTick: ->
     _.each @rooms, (room) ->
       # console.log "updating room #{room.roomId}"
+
+  get: (id) -> _.findWhere @rooms, roomId: id

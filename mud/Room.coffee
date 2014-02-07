@@ -1,8 +1,7 @@
 module.exports = class Room
 
   constructor: (@roomId, @description, @exits) ->
-
-  entities: []
+    @entities = []
 
   addEntity: (entity) ->
     @entities.push entity
@@ -14,4 +13,3 @@ module.exports = class Room
   broadcast: (msg) ->
     for entity in entities
       entity.displayMsg msg
-    
