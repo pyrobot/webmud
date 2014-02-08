@@ -3,10 +3,11 @@ Entity = require './Entity'
 
 module.exports = class EntityManager
 
-  entities: []
-  entityIdCtr: 0
+  constructor: ->
+    @entities = []
+    @entityIdCtr = 0
 
-  init: (@entityMaster) ->
+  init: (@entityMasterList) ->
 
   add: (entityObject) ->
     @entityIdCtr++
