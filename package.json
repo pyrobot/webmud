@@ -1,11 +1,11 @@
 {
   "name": "webmud",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A MUD written in CoffeeScript, with an HTML5 WebSockets interface, and MongoDB back-end.",
   "scripts": {
     "start": "app.js"
   },
-  "repository": "https://github.com/pyrobot/webmud-revival",
+  "repository": "https://github.com/pyrobot/webmud",
   "author": "pyrobot",
   "license": "BSD",
   "subdomain": "webmud",
