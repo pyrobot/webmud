@@ -1,4 +1,4 @@
-commands = require 'commands_entity'
+commands = require './commands_entity'
 
 module.exports = class Entity
 
