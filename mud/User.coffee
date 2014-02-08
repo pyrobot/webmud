@@ -43,6 +43,11 @@ module.exports = class User
     @state = newState
     @mud.states[@state].enter this
 
+  forceQuit: (reason) ->
+    @forceQuitReason = reason
+    @changeState 'forceQuit'
+
+
   createEntity: -> @entity = @mud.entityManager.add @record.entity
 
   update: ->

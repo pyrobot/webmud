@@ -6,6 +6,8 @@ states = require './states'
 mongoose = require 'mongoose'
 colors = require './colors'
 
+EventEmitter = require('events').EventEmitter
+
 EntityManager = require './EntityManager'
 RoomManager = require './RoomManager'
 
@@ -14,22 +16,19 @@ child_process = require 'child_process'
 # node hates coffee
 timerJsFilePath = "#{__dirname}/timerShim.js"
 
-module.exports = class Mud
+module.exports = class Mud extends EventEmitter
 
-  # create new instances of the database, entity manager, and room manager
-  db: new Db()
-  entityManager: new EntityManager()
-  roomManager: new RoomManager()
+  constructor: ->
+    @db = new Db()
+    @entityManager = new EntityManager()
+    @roomManager = new RoomManager()
+    @states = states
+    @timerProcess = null
+    @users = []
 
-  # attach the game states
-  states: states
-
-  # reference to timer child process gets created in the init function
-  timerProcess: null
-
-  # arrays holding the various mud objects
-  users: []
-
+  getUserByName: (userName) -> _.findWhere @users, name: userName
+  userLoggedIn: (userName) -> Boolean @getUserByName userName 
+  
   addUser: (conn) ->
     user = new User(conn, this, 'connect')
 
@@ -47,11 +46,14 @@ module.exports = class Mud
   broadcast: (msg, skipUser) ->
     for user in @users
       unless user is skipUser or user.state isnt 'main'
+        # todo: change to use ANSI "clear until end of line" (instead of 57 spaces)
         user.write "\r#{new Array(57).join(' ')}\r#{msg}\r\n>#{user.currentCmd}"    
 
   start: (callback) ->
     console.log "Starting MUD"
     console.log "Connecting to database"
+
+    @on 'initialized', => callback() if callback
 
     connectDb = (dbconfig) =>
       mongoose.connect(dbconfig.mongodb)
@@ -61,7 +63,7 @@ module.exports = class Mud
         query.exec (err, foundConfig) =>
           if foundConfig
             @config = foundConfig
-            @init(callback)
+            @init()
           else
             console.log "mudconfig not found"
             loadMudconfig()
@@ -104,19 +106,34 @@ module.exports = class Mud
         fs.writeFileSync location, JSON.stringify(dbconfig)
         connectDb(dbconfig)
 
-  init: (callback) ->
+  init: ->
     # Init room and entity managers
     @roomManager.init @config.rooms
     @entityManager.init @config.entities
 
     # Create timer process
-    @timerProcess = child_process.fork timerJsFilePath
-    @timerProcess.on 'message', (tick) => @tickUpdate tick
+    unless global.v8debug
+      console.log "Creating timer process"
+      @timerProcess = child_process.fork timerJsFilePath
+      @timerProcess.on 'message', (tick) => @tickUpdate tick
+      @timerProcess.on 'error', (err) -> console.log 'Error: ' + err.message
+    else
+      # having issues with child process not terminating in debug mode, so just use a setInterval and call tickUpdate manually
+      console.log "Debug mode timer started"
+      setInterval (=> @tickUpdate @currentTick+1), 1000
+      process.nextTick => @tickUpdate 0
 
-    # Call the callback
-    callback() if callback
+    console.log "Waiting for response from timer"
+    @errorTimeout = setTimeout =>
+      console.log "No response from timer, shutting down."
+      process.exit(1)
+    , 5000
 
-  tickUpdate: (@currentTick) -> 
-    @entityManager.updateTick()
-    @roomManager.updateTick()
-    # _.each @rooms, (r) -> r.updateTick()
+  tickUpdate: (@currentTick) ->
+    if @currentTick is 0
+      clearTimeout @errorTimeout
+      console.log "Timer message received"
+      @emit 'initialized'
+    else
+      @entityManager.updateTick()
+      @roomManager.updateTick()

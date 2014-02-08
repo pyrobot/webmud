@@ -18,7 +18,7 @@ module.exports =
             return console.log "DB Err: " + err
           if foundUser
             user.foundUser = foundUser
-            user.changeState 'password'
+            user.changeState 'checkLoggedIn'
           else
             user.confirmName = name
             user.changeState 'confirm'

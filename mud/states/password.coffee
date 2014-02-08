@@ -11,10 +11,8 @@ module.exports =
       pw = user.currentCmd
 
       if bcrypt.compareSync(pw, user.foundUser.hash)
-        user.record = user.foundUser
-        user.entity = user.record.entity
-        user.name = user.record.name
-        user.changeState 'main'
+        user.name = user.foundUser.name
+        user.changeState 'enterGame'
       else
         user.badPassword++
         

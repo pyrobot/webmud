@@ -11,4 +11,4 @@ module.exports =
         room: 0
       user.record = new user.mud.db.User name: user.name, hash: hash, entity: user.entity
       user.record.save ->
-        user.changeState 'main'
+        user.changeState 'enterGame'
