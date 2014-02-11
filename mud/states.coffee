@@ -16,7 +16,6 @@ module.exports =
   confirmRace: require './states/confirmRace'
   saveNewCharacter: require './states/saveNewCharacter'
   checkLoggedIn: require './states/checkLoggedIn'
-  continueGame: require './states/continueGame'
   enterGame: require './states/enterGame'
   main: require './states/main'
   forceQuit: require './states/forceQuit'
