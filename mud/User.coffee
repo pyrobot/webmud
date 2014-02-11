@@ -8,6 +8,7 @@ module.exports = class User
     @echo = "full"
     @record = null
     @parser = new Parser()
+    @loggedIn = false
 
     conn.on 'data', (message) => @keyhandler(message.charCodeAt(0))
     @changeState state
@@ -43,15 +44,20 @@ module.exports = class User
     @state = newState
     @mud.states[@state].enter this
 
+  removeNow: (callback) ->
+    @write "\r\n*{226}You are being removed from the server.\r\n"
+    @update =>
+      @mud.removeUser this, false
+      @conn.end()
+      @echo = 'none'
+      callback() if callback
+
   forceQuit: (reason) ->
     @forceQuitReason = reason
     @changeState 'forceQuit'
 
-
   createEntity: -> @entity = @mud.entityManager.add @record.entity
 
-  update: ->
-    @record.save ->
-      console.log 'User record updated'
+  update: (callback) -> @record?.save -> callback() if callback      
 
   updateTick: -> console.log 'User tick update'

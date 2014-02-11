@@ -7,7 +7,12 @@ module.exports =
     query.exec (err, foundUser) ->
       if err
         return console.log "DB Err: " + err
+
+      if user.mud.userLoggedIn user.name
+        return user.changeState 'checkLoggedIn'
+
       if foundUser
+        user.loggedIn = true
         user.record = foundUser
         user.entity = user.record.entity
         user.write "\r\n*{249}Welcome, *{255}#{user.name}*{249}!\r\n*{255}#{user.name} has entered the realm.*{249}\r\n>"

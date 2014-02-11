@@ -14,17 +14,14 @@ module.exports =
       pw = user.currentCmd
 
       if bcrypt.compareSync(pw, user.foundUser.hash)
+        # check if the user is already logged in
         currentLoggedInUser = user.mud.getUserByName user.foundUser.name
+
+        # force quit the other session
         if currentLoggedInUser
-          # copy the current logged in user data into this user
-          user.record = currentLoggedInUser.record
-          user.entity = currentLoggedInUser.entity
-          user.name = currentLoggedInUser.name
-
-          # force quit the other session
-          currentLoggedInUser.forceQuit 'Logged in from different session.'
-
-          user.changeState 'continueGame'
+          currentLoggedInUser.removeNow ->
+            user.name = user.foundUser.name
+            user.changeState 'enterGame'
         else
           user.changeState 'enterGame'
       else

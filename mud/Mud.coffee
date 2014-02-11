@@ -13,6 +13,9 @@ RoomManager = require './RoomManager'
 
 child_process = require 'child_process'
 
+# how often should users be saved
+GLOBAL_UPDATE_TICKS = 30
+
 # node hates coffee
 timerJsFilePath = "#{__dirname}/timerShim.js"
 
@@ -26,7 +29,7 @@ module.exports = class Mud extends EventEmitter
     @timerProcess = null
     @users = []
 
-  getUserByName: (userName) -> _.findWhere @users, name: userName
+  getUserByName: (userName) -> _.findWhere @users, {name: userName, loggedIn: true}
   userLoggedIn: (userName) -> Boolean @getUserByName userName 
   
   addUser: (conn) ->
@@ -37,11 +40,25 @@ module.exports = class Mud extends EventEmitter
 
     user.conn.on 'close', => @removeUser user
 
-  removeUser: (user) ->
-    @entityManager.removeEntity user.entity
+  removeUser: (user, updateFlag=true) ->
     index = @users.indexOf user
-    @users.splice index, 1
-    console.log "User #{user.name || user.confirmName || ''} disconnected (#{@users.length} total)"
+    if index >= 0
+      user.update() if updateFlag
+      @entityManager.removeEntity user.entity
+      @users.splice index, 1
+      console.log "User #{user.name || user.confirmName || ''} disconnected (#{@users.length} total)"
+    else
+      console.log "Session disconnected but user was already removed (#{user.name})"
+
+  updateUsers: -> 
+    # console.log "updating all users (tick: #{@currentTick}"
+    debugger
+    _.chain(@users)
+    .where(loggedIn: true)
+    .each (user) -> 
+      console.log "Updating user: #{user.name}"
+      user.update()
+
 
   broadcast: (msg, skipUser) ->
     for user in @users
@@ -137,3 +154,4 @@ module.exports = class Mud extends EventEmitter
     else
       @entityManager.updateTick()
       @roomManager.updateTick()
+      if (@currentTick % 10) is 0 then @updateUsers()
