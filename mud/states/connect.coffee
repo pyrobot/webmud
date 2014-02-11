@@ -1,5 +1,5 @@
-module.exports = enter: (user) ->
-  user.write "*{40}
+module.exports = enter: ->
+  @write "*{40}
 \r\n _       _         _             _   _  ___
 \r\n( )  _  ( )       ( )    /'\\_/`\\( ) ( )(  _`\\ 
 \r\n| | ( ) | |   __  | |_   |     || | | || | ) |
@@ -8,4 +8,4 @@ module.exports = enter: (user) ->
 \r\n`\\___x___/'`\\____)(_,__/'(_) (_)(_____)(____/'
 \r\n*{240}-=-=-=-=-=============================*{253}%%*{239}****{160}>*{239}>*{249}---\r\n
 "
-  user.changeState 'login'
+  @changeState 'login'

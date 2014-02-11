@@ -1,37 +1,37 @@
 bcrypt = require 'bcrypt'
 
 module.exports =
-  enter: (user) ->
-    unless user.mud.userLoggedIn user.foundUser.name
-      user.changeState 'password'
+  enter: ->
+    unless @mud.userLoggedIn @foundUser.name
+      @changeState 'password'
     else
-      user.write "\r\nUser is already logged in.\r\n*{249}Enter your *{255}password*{249} to take over session: "
-      user.echo = '*'
-      user.badPassword = 0
+      @write "\r\nUser is already logged in.\r\n*{249}Enter your *{255}password*{249} to take over session: "
+      @echo = '*'
+      @badPassword = 0
 
-  process: (user) ->
-    if user.currentCmd.length > 0
-      pw = user.currentCmd
+  process: ->
+    if @currentCmd.length > 0
+      pw = @currentCmd
 
-      if bcrypt.compareSync(pw, user.foundUser.hash)
+      if bcrypt.compareSync(pw, @foundUser.hash)
         # check if the user is already logged in
-        currentLoggedInUser = user.mud.getUserByName user.foundUser.name
+        currentLoggedInUser = @mud.getUserByName @foundUser.name
 
         # force quit the other session
         if currentLoggedInUser
-          currentLoggedInUser.removeNow ->
-            user.name = user.foundUser.name
-            user.changeState 'enterGame'
+          currentLoggedInUser.removeNow =>
+            @name = @foundUser.name
+            @changeState 'enterGame'
         else
-          user.changeState 'enterGame'
+          @changeState 'enterGame'
       else
-        user.badPassword++
+        @badPassword++
         
-        if user.badPassword >= 3
-          user.write "\r\n*{196}Invalid password.\r\n*{226}Too many invalid password attempts."
-          user.changeState 'goodbye'
+        if @badPassword >= 3
+          @write "\r\n*{196}Invalid password.\r\n*{226}Too many invalid password attempts."
+          @changeState 'goodbye'
         else
-          user.write "\r\n*{196}Invalid password.\r\n*{249}Enter your *{255}password* to take over session{249}: "
+          @write "\r\n*{196}Invalid password.\r\n*{249}Enter your *{255}password* to take over session{249}: "
 
     else
-      user.write "\r\n*{249}Enter your *{255}password*{249} to take over session: "
+      @write "\r\n*{249}Enter your *{255}password*{249} to take over session: "

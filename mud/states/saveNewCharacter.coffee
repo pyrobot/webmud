@@ -2,14 +2,20 @@ bcrypt = require 'bcrypt'
 _ = require 'underscore'
 
 module.exports =
-  enter: (user) ->
-      hash = bcrypt.hashSync(user.pass, 8)
-      user.entity = 
-        name: user.name
-        type: user.race.name
+  enter: ->
+      hash = bcrypt.hashSync @pass, 8
+
+      @entity = 
+        name: @name
+        type: @race.name
         gender: '0'
         room: 0
         specialness: 0
-      user.record = new user.mud.db.User name: user.name, hash: hash, entity: user.entity
-      user.record.save ->
-        user.changeState 'enterGame'
+
+      @record = new @mud.db.User
+        name: @name
+        hash: hash
+        entity: @entity
+
+      @record.save =>
+        @changeState 'enterGame'

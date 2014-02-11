@@ -16,7 +16,7 @@ module.exports = class User
   keyhandler: (keycode) ->
     switch
       when keycode is 13 
-        @mud.states[@state].process this
+        @mud.states[@state].process.apply this
         @currentCmd = ""
         
       when keycode is 127 
@@ -42,7 +42,7 @@ module.exports = class User
 
   changeState: (newState) ->
     @state = newState
-    @mud.states[@state].enter this
+    @mud.states[@state].enter.apply this
 
   removeNow: (callback) ->
     @write "\r\n*{226}You are being removed from the server.\r\n"

@@ -1,11 +1,11 @@
 module.exports =
-  enter: (user) ->
-    user.write "\r\n*{249}Enter a *{255}password*{249}: "
-    user.echo = '*'
+  enter: ->
+    @write "\r\n*{249}Enter a *{255}password*{249}: "
+    @echo = '*'
 
-  process: (user) ->
-    if user.currentCmd.length > 0
-      user.pass = user.currentCmd
-      user.changeState 'confirmpw'
+  process: ->
+    if @currentCmd.length > 0
+      @pass = @currentCmd
+      @changeState 'confirmpw'
     else
-      user.write "\r\n*{249}Enter a *{255}password*{249}: "
+      @write "\r\n*{249}Enter a *{255}password*{249}: "
