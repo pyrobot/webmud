@@ -51,13 +51,9 @@ module.exports = class Mud extends EventEmitter
       console.log "Session disconnected but user was already removed (#{user.name})"
 
   updateUsers: -> 
-    # console.log "updating all users (tick: #{@currentTick}"
-    debugger
     _.chain(@users)
     .where(loggedIn: true)
-    .each (user) -> 
-      console.log "Updating user: #{user.name}"
-      user.update()
+    .each (user) -> user.update()
 
 
   broadcast: (msg, skipUser) ->
