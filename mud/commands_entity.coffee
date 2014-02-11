@@ -1,7 +1,7 @@
 module.exports = commands =
 
-  look: ->
+  look: (target) ->
     # room.look
 
-  say: (msg) ->
+  say: ->
     # room.broadcast msg

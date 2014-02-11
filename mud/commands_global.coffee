@@ -1,33 +1,23 @@
 module.exports = commands =
 
-  help: (user) ->
-    user.write "\r\n    Available commands:\r\n"
+  help: ->
+    @write "\r\n    Available commands:\r\n"
     for key, val of commands
-      user.write "\t#{key}\r\n"
-    user.write ">"
+      @write "\t#{key}\r\n"
+    @write ">"
 
-  # say: (user) ->
-  #   msg = user.strip user.commandArgs.join ' '
-  #   user.write "\r\n*{82}You *{70}say: *{82}#{msg}*{249}\r\n>"
-  #   user.mud.broadcast "*{82}#{user.name} *{70}says: *{82}#{msg}*{249}", user
-
-  who: (user) ->
-    allUsers = user.mud.users
-    user.write "\r\nCurrently connected (*{255}#{allUsers.length}*{249})\r\n"
+  who: ->
+    allUsers = @mud.users
+    @write "\r\nCurrently connected (*{255}#{allUsers.length}*{249})\r\n"
     for u, i in allUsers
-      user.write "\t ##{i+1}: *{255}#{u.name}*{249}\r\n"
-    user.write ">"
+      @write "\t ##{i+1}: *{255}#{u.name}*{249}\r\n"
+    @write ">"
 
-  # update: (user) ->
-  #   user.update()
-  #   user.write "\r\nUpdated!\r\n>"
+  stat: ->
+    @write "\r\nYou are a #{@entity.type}.\r\n>"
 
-  stat: (user) ->
-    user.write "\r\nYou are a #{user.entity.type}.\r\n>"
+  logoff: ->
+    @changeState 'goodbye'
 
-  logoff: (user) ->
-    user.changeState 'goodbye'
-
-  special: (user) ->
-    user.write "\r\nYou are special. (#{user.record.entity.specialness++})\r\n>"
-
+  special: ->
+    @write "\r\nYou are special. (#{@record.entity.specialness++})\r\n>"

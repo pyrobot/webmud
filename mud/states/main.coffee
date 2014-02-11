@@ -11,7 +11,7 @@ module.exports =
       cmd = commands[firstArg] or user.entity.commands[firstArg]
       commandArgs = args[1..]
       if cmd
-        cmd user, commandArgs
+        cmd.apply user, commandArgs
       else
         user.write "\r\nInvalid command.. type '*{255}help*{249}' for help.\r\n>"       
       user.currentCmd = ''
