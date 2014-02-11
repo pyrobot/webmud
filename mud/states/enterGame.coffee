@@ -1,7 +1,6 @@
 module.exports =
   enter: (user) ->
     # cant be sure that there weren't any changes to the user record while logging in, so refresh the latest saved record
-    console.log "Name #{user.name}"
     query = user.mud.db.User.findOne name: user.name
 
     query.exec (err, foundUser) ->
