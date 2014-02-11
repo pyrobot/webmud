@@ -27,3 +27,7 @@ module.exports = commands =
 
   logoff: (user) ->
     user.changeState 'goodbye'
+
+  special: (user) ->
+    user.write "\r\nYou are special. (#{user.record.entity.specialness++})\r\n>"
+

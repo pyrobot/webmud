@@ -10,6 +10,7 @@ module.exports = class Db
         type: { type: String } # mongo gets confused when using the fieldName "type", so must explicitly define it
         gender: String
         room: Number
+        specialness: Number
 
     configSchema = mongoose.Schema
       races: [
