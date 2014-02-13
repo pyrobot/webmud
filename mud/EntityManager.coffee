@@ -20,6 +20,10 @@ module.exports = class EntityManager
   remove: (entityId) -> @removeEntity _.findWhere @entities, entityId: entityId
 
   removeEntity: (entityObject) ->
+    # remove from current room
+    entityObject?.room.removeEntity entityObject
+
+    # remove from entity manager list
     index = @entities.indexOf entityObject
     @entities.splice index, 1
 
