@@ -1,6 +1,6 @@
 module.exports = class Room
 
-  constructor: (@roomId, @description, @exits) ->
+  constructor: (@roomManager, @roomId, @description, @exits) ->
     @entities = []
 
   addEntity: (entity) ->
@@ -10,6 +10,7 @@ module.exports = class Room
     index = @entities.indexOf entity
     @entities.splice index, 1
 
-  broadcast: (msg) ->
-    for entity in entities
-      entity.displayMsg msg
+  broadcast: (msg, skipEntity) ->
+    for entity in @entities
+      unless entity is skipEntity
+        entity.displayMsg msg

@@ -3,7 +3,7 @@ Entity = require './Entity'
 
 module.exports = class EntityManager
 
-  constructor: ->
+  constructor: (@mud) ->
     @entities = []
     @entityIdCtr = 0
 
@@ -11,7 +11,9 @@ module.exports = class EntityManager
 
   add: (entityObject) ->
     @entityIdCtr++
-    entity = new Entity(@entityIdCtr, entityObject?.name, entityObject?.type, entityObject?.gender)
+    entity = new Entity(this, @entityIdCtr, entityObject?.name, entityObject?.type, entityObject?.gender, entityObject?.owner, entityObject?.controller)
+    entity.room = @mud.roomManager.get entityObject.roomId
+    entity.room.addEntity entity
     @entities.push entity
     return entity
 
