@@ -2,6 +2,16 @@ _ = require 'underscore'
 
 obviousExits = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest', 'up', 'down']
 
+opposites =
+  north: 'south'
+  northeast: 'southwest'
+  east: 'west'
+  southeast: 'northwest'
+  south: 'north'
+  southwest: 'northeast'
+  west: 'east'
+  northwest: 'southeast'  
+
 module.exports = commands = 
   l: (target) -> commands.look.apply this, arguments
   look: (target) ->
@@ -30,9 +40,19 @@ module.exports = commands =
 
     exit = _.findWhere exits, type: t
     if exit
-      @entity.room.broadcast "#{@entity.name} has left the room.", @entity
+      if obviousExits.indexOf(t) <= 8 
+        enterMsg = "#{@entity.name} leaves to the #{target}."
+        exitMsg = "#{@entity.name} enters from the #{opposites[target]}."
+      if t is 'up'
+        enterMsg = "#{@entity.name} leaves upwards"
+        exitMsg = "#{@entity.name} enters from below."
+      if t is 'down'
+        enterMsg = "#{@entity.name} leaves downwards."
+        exitMsg = "#{@entity.name} enters from above."
+
+      @entity.room.broadcast enterMsg, @entity
       @entity.moveTo exit.to
-      @entity.room.broadcast "#{@entity.name} has entered the room.", @entity
+      @entity.room.broadcast exitMsg, @entity
       commands.look.call this
     else
       if obviousExits.indexOf(t) >= 0
