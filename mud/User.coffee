@@ -56,7 +56,12 @@ module.exports = class User
     @forceQuitReason = reason
     @changeState 'forceQuit'
 
-  createEntity: -> @entity = @mud.entityManager.add @record.entity
+  createEntity: -> 
+    entity = @record.entity.toObject()
+    entity.owner = this
+    entity.controller = this
+
+    @entity = @mud.addEntity entity
 
   update: (callback) -> @record?.save -> callback() if callback      
 
