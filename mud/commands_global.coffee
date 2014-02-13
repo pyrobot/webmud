@@ -21,3 +21,7 @@ module.exports = commands =
 
   special: ->
     @write "\r\nYou are special. (#{@record.entity.specialness++})\r\n>"
+
+  set: (key, val) ->
+    unless key and val then return @write "\r\nInvalid command.\r\nSyntax: set <property> <value>\r\n>"
+    @set key, val

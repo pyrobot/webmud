@@ -11,6 +11,8 @@ module.exports = class Db
         gender: String
         roomId: Number
         specialness: Number
+      settings:
+        prompt: String
 
     configSchema = mongoose.Schema
       races: [

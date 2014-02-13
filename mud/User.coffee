@@ -63,6 +63,13 @@ module.exports = class User
 
     @entity = @mud.addEntity entity
 
-  update: (callback) -> @record?.save -> callback() if callback      
+  update: (callback) -> @record?.save -> callback() if callback
+
+  set: (key, val) -> 
+    k = key.toLowerCase()
+    s = @settings[k]
+    unless s then return @write ""
+
+    @write "\r\nSetting #{key} to #{val}\r\n"  
 
   updateTick: -> console.log 'User tick update'

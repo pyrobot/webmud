@@ -12,10 +12,14 @@ module.exports =
         roomId: 1
         specialness: 0
 
+      @settings =
+        prompt: '>'
+
       @record = new @mud.db.User
         name: @name
         hash: hash
         entity: @entity
+        settings: @settings
 
       @record.save =>
         @changeState 'enterGame'
