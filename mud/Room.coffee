@@ -10,7 +10,7 @@ module.exports = class Room
     index = @entities.indexOf entity
     @entities.splice index, 1
 
-  broadcast: (msg, skipEntity) ->
+  broadcast: (msg, skipEntity...) ->
     for entity in @entities
-      unless entity is skipEntity
+      unless skipEntity.indexOf(entity) >= 0
         entity.displayMsg msg

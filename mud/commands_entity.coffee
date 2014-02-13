@@ -12,12 +12,45 @@ opposites =
   west: 'east'
   northwest: 'southeast'  
 
-module.exports = commands = 
+module.exports = commands =
+  spawn: (target) ->
+    unless target then return @write "\r\nSpawn a what?\r\n>"
+    @mud.entityManager.add
+      name: target
+      type: 'none'
+      gender: '0'
+      roomId: 1
+      specialness: 0
+
+    @write "\r\nYou spawn '#{target}'\r\n>"
+    @entity.room.broadcast "#{target} has appeared!", @entity
+
   l: (target) -> commands.look.apply this, arguments
   look: (target) ->
     room = @entity.room
     if target
-      @write "\r\nLook at what?\r\n>"
+      t = target.toLowerCase()
+      
+      matches = _.filter room.entities, (e) -> 
+        re = new RegExp "\\b#{t}", "g"
+        re.test e.name.toLowerCase()
+
+      if matches.length > 0
+        lookAt = _.findWhere matches, (e) -> e.name.toLowerCase() is t
+        if matches.length is 1 then lookAt = matches[0]
+        if lookAt
+          if lookAt is @entity
+            @write "\r\nYou look at yourself.\r\n>"
+            room.broadcast "#{@entity.name} looks at themselves.", @entity
+          else
+            @write "\r\nYou look at #{lookAt.name}.\r\n>"
+            lookAt.displayMsg "#{@entity.name} looks at you."
+            room.broadcast "#{@entity.name} looks at #{lookAt.name}", @entity, lookAt
+        else
+          @write "\r\nMatches: #{_.pluck(matches,'name')}\r\n>"
+      else
+        @write "\r\n'#{target}' cannot be found.\r\n>"
+
     else
       @write "\r\n#{room.description}"
       entities = _.filter room.entities, (e) => e isnt @entity
