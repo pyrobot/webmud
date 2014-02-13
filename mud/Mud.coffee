@@ -23,8 +23,8 @@ module.exports = class Mud extends EventEmitter
 
   constructor: ->
     @db = new Db()
-    @entityManager = new EntityManager()
-    @roomManager = new RoomManager()
+    @entityManager = new EntityManager(this)
+    @roomManager = new RoomManager(this)
     @states = states
     @timerProcess = null
     @users = []
@@ -50,11 +50,12 @@ module.exports = class Mud extends EventEmitter
     else
       console.log "Session disconnected but user was already removed (#{user.name})"
 
+  addEntity: (entityObject) -> @entityManager.add entityObject
+
   updateUsers: -> 
     _.chain(@users)
     .where(loggedIn: true)
     .each (user) -> user.update()
-
 
   broadcast: (msg, skipUser) ->
     for user in @users
