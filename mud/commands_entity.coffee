@@ -3,7 +3,7 @@ _ = require 'underscore'
 obviousExits = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest', 'up', 'down']
 
 module.exports = commands = 
-  l: (target) -> commands.look.call this, target
+  l: (target) -> commands.look.apply this, arguments
   look: (target) ->
     room = @entity.room
     if target
