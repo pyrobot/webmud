@@ -9,7 +9,7 @@ module.exports =
         name: @name
         type: @race.name
         gender: '0'
-        room: 0
+        roomId: 1
         specialness: 0
 
       @record = new @mud.db.User
