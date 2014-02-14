@@ -14,11 +14,12 @@ module.exports =
         @loggedIn = true
         @record = foundUser
         @entity = @record.entity
-        @write "\r\n*{249}Welcome, *{255}#{@name}*{249}!\r\n*{255}#{@name} has entered the realm.*{249}\r\n>"
+        @settings = @record.settings
+        @writelnp "*{249}Welcome, *{255}#{@name}*{249}!", "*{255}#{@name} has entered the realm.*{249}"
         @mud.broadcast "*{255}#{@name} has entered the realm.*{249}", this
         @createEntity()
         @changeState 'main'
       else
         # should not get to this point, since the record should be in the database
-        @write "\r\n*{226}There was problem loading your data, please hit refresh."
+        @writeln "*{226}There was problem loading your data, please hit refresh."
         @changeState 'goodbye'

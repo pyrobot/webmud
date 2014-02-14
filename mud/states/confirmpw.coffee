@@ -1,6 +1,6 @@
 module.exports =
   enter: ->
-    @write "\r\n*{249}Re-enter the same *{255}password*{249}: "
+    @writeln "*{249}Re-enter the same *{255}password*{249}: "
     @echo = '*'
 
   process: ->
@@ -11,8 +11,8 @@ module.exports =
         @echo = 'full'
         @changeState 'createChar'
       else
-        @write "\r\n*{196}Passwords do not match!"
+        @writeln "*{196}Passwords do not match!"
         @changeState 'createpw'
 
     else
-      @write "\r\n*{249}Re-enter the same *{255}password*{249}: "
+      @writeln "*{249}Re-enter the same *{255}password*{249}: "

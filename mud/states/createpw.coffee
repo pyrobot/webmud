@@ -1,6 +1,6 @@
 module.exports =
   enter: ->
-    @write "\r\n*{249}Enter a *{255}password*{249}: "
+    @writeln "*{249}Enter a *{255}password*{249}: "
     @echo = '*'
 
   process: ->
@@ -8,4 +8,4 @@ module.exports =
       @pass = @currentCmd
       @changeState 'confirmpw'
     else
-      @write "\r\n*{249}Enter a *{255}password*{249}: "
+      @writeln "*{249}Enter a *{255}password*{249}: "

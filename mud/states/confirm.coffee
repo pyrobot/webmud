@@ -1,6 +1,6 @@
 module.exports =
   enter: ->
-    @write "\r\n*{249}User '*{255}#{@confirmName}*{249}' does not exist, create? (*{34}Y*{249}/*{124}N*{249}) "
+    @writeln "*{249}User '*{255}#{@confirmName}*{249}' does not exist, create? (*{34}Y*{249}/*{124}N*{249}) "
 
   process: ->
     if @currentCmd.length > 0
@@ -10,10 +10,10 @@ module.exports =
         @name = @confirmName
         @changeState 'createpw'            
       else if cmd is 'N'
-        @write '\r\n'
+        @writeln ''
         @changeState 'login'
       else
-        @write "\r\n*{249}Please enter *{34}Y*{249} or *{124}N*{249}.\r\n*{249}User '*{255}#{@confirmName}*{249}' does not exist, create? (*{34}Y*{249}/*{124}N*{249}) "
+        @writeln "n*{249}Please enter *{34}Y*{249} or *{124}N*{249}.", "*{249}User '*{255}#{@confirmName}*{249}' does not exist, create? (*{34}Y*{249}/*{124}N*{249}) "
 
     else
-      @write "\r\n*{249}User '*{255}#{@confirmName}*{249}' does not exist, create? (*{34}Y*{249}/*{124}N*{249}) "
+      @writeln "*{249}User '*{255}#{@confirmName}*{249}' does not exist, create? (*{34}Y*{249}/*{124}N*{249}) "

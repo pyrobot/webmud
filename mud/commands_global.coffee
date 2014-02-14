@@ -1,27 +1,27 @@
 module.exports = commands =
 
   help: ->
-    @write "\r\n    Available commands:\r\n"
+    @writeln "    Available commands:"
     for key, val of commands
-      @write "\t#{key}\r\n"
-    @write ">"
+      @writeln "\t#{key}"
+    @writeln "#{@settings.prompt}"
 
   who: ->
     allUsers = @mud.users
-    @write "\r\nCurrently connected (*{255}#{allUsers.length}*{249})\r\n"
+    @writeln "Currently connected (*{255}#{allUsers.length}*{249})"
     for u, i in allUsers
-      @write "\t ##{i+1}: *{255}#{u.name}*{249}\r\n"
-    @write ">"
+      @writeln "\t ##{i+1}: *{255}#{u.name}*{249}"
+    @writeln "#{@settings.prompt}"
 
   stat: ->
-    @write "\r\nYou are a #{@entity.type}.\r\n>"
+    @writelnp "You are a #{@entity.type}."
 
   logoff: ->
     @changeState 'goodbye'
 
   special: ->
-    @write "\r\nYou are special. (#{@record.entity.specialness++})\r\n>"
+    @writelnp "You are special. (#{@record.entity.specialness++})"
 
   set: (key, val) ->
-    unless key and val then return @write "\r\nInvalid command.\r\nSyntax: set <property> <value>\r\n>"
+    unless key and val then return @writelnp "Invalid command.", "Syntax: set <property> <value>"
     @set key, val

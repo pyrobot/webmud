@@ -5,7 +5,7 @@ module.exports =
     unless @mud.userLoggedIn @foundUser.name
       @changeState 'password'
     else
-      @write "\r\nUser is already logged in.\r\n*{249}Enter your *{255}password*{249} to take over session: "
+      @writeln "User is already logged in.", "*{249}Enter your *{255}password*{249} to take over session: "
       @echo = '*'
       @badPassword = 0
 
@@ -28,10 +28,10 @@ module.exports =
         @badPassword++
         
         if @badPassword >= 3
-          @write "\r\n*{196}Invalid password.\r\n*{226}Too many invalid password attempts."
+          @writeln "*{196}Invalid password.", "*{226}Too many invalid password attempts."
           @changeState 'goodbye'
         else
-          @write "\r\n*{196}Invalid password.\r\n*{249}Enter your *{255}password* to take over session{249}: "
+          @writeln "*{196}Invalid password.", "*{249}Enter your *{255}password* to take over session{249}: "
 
     else
-      @write "\r\n*{249}Enter your *{255}password*{249} to take over session: "
+      @writeln "*{249}Enter your *{255}password*{249} to take over session: "

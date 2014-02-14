@@ -14,7 +14,7 @@ opposites =
 
 module.exports = commands =
   spawn: (target) ->
-    unless target then return @write "\r\nSpawn a what?\r\n>"
+    unless target then return @writelnp "Spawn a what?"
     @mud.entityManager.add
       name: target
       type: 'none'
@@ -22,7 +22,7 @@ module.exports = commands =
       roomId: 1
       specialness: 0
 
-    @write "\r\nYou spawn '#{target}'\r\n>"
+    @writelnp "You spawn '#{target}'."
     @entity.room.broadcast "#{target} has appeared!", @entity
 
   l: (target) -> commands.look.apply this, arguments
@@ -40,33 +40,33 @@ module.exports = commands =
         if matches.length is 1 then lookAt = matches[0]
         if lookAt
           if lookAt is @entity
-            @write "\r\nYou look at yourself.\r\n>"
+            @writelnp "You look at yourself."
             room.broadcast "#{@entity.name} looks at themselves.", @entity
           else
-            @write "\r\nYou look at #{lookAt.name}.\r\n>"
+            @writelnp "You look at #{lookAt.name}."
             lookAt.displayMsg "#{@entity.name} looks at you."
             room.broadcast "#{@entity.name} looks at #{lookAt.name}", @entity, lookAt
         else
-          @write "\r\nMatches: #{_.pluck(matches,'name')}\r\n>"
+          @writelnp "Matches: #{_.pluck(matches,'name')}"
       else
-        @write "\r\n'#{target}' cannot be found.\r\n>"
+        @writelnp "'#{target}' cannot be found."
 
     else
-      @write "\r\n#{room.description}"
+      @writeln "#{room.description}"
       entities = _.filter room.entities, (e) => e isnt @entity
       if entities.length > 0
         entityNames = _.pluck entities, 'name'
-        @write "\r\nIn the room: #{entityNames.join(', ')}"
+        @writeln "In the room: #{entityNames.join(', ')}"
 
       exits = _.filter room.exits, (e) => obviousExits.indexOf(e.type) >= 0
       if exits.length > 0
         exitTypes = _.pluck exits, 'type'
-        @write "\r\nObvious exits: #{exitTypes}"
+        @writeln "Obvious exits: #{exitTypes}"
 
-      @write "\r\n>"
+      @writeln "#{@settings.prompt}"
 
   go: (target) ->
-    unless target then return @write "\r\nGo where?\r\n>"
+    unless target then return @writelnp "Go where?"
 
     exits = @entity.room.exits
     t = target.toLowerCase()
@@ -90,9 +90,9 @@ module.exports = commands =
       commands.look.call this
     else
       if obviousExits.indexOf(t) >= 0
-        @write "\r\nThere is no exit in that direction.\r\n>"
+        @writelnp "There is no exit in that direction."
       else
-        @write "\r\nYou cannot go there.\r\n>"
+        @writelnp "You cannot go there."
 
   # movement aliases
   n: -> commands.go.call this, 'north'
@@ -127,6 +127,6 @@ module.exports = commands =
 
   say: ->
     msg = @currentCmd.slice 4
-    @write "\r\nYou say: #{msg}\r\n>"
+    @writelnp "You say: #{msg}"
     @entity.room.broadcast "#{@entity.name} says: #{msg}", @entity
 

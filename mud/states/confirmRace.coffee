@@ -2,7 +2,7 @@ module.exports =
   enter: ->
     race = @selectedRace
     lname =  "#{race.name[0...1].toUpperCase()}#{race.name[1..].toLowerCase()}"
-    @write "\r\n#{@selectedRace.description}\r\nYou have chosen '#{lname}', is this correct? (Y/N) "
+    @writeln "#{@selectedRace.description}", "You have chosen '#{lname}', is this correct? (Y/N) "
 
   process: ->
     race = @selectedRace
@@ -16,7 +16,7 @@ module.exports =
       else if cmd is 'N'
         @changeState 'createChar'
       else
-        @write "\r\nPlease enter a Y or N.\r\nYou have chosen '#{lname}', is this correct? (Y/N) "
+        @writeln "Please enter a Y or N.", "You have chosen '#{lname}', is this correct? (Y/N) "
 
     else
-      @write "\r\nYou have chosen '#{lname}', is this correct? (Y/N) "
+      @writeln "You have chosen '#{lname}', is this correct? (Y/N) "

@@ -30,9 +30,9 @@ module.exports =
       if cmd
         cmd.apply this, commandArgs
       else
-        @write "\r\nInvalid command.. type '*{255}help*{249}' for help.\r\n>"       
+        @writelnp "Invalid command.. type '*{255}help*{249}' for help."
       @currentCmd = ''
       @commandArgs = ''
 
     else
-      @write "\r\n>"
+      @writeln "#{@settings.prompt}"
