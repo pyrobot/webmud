@@ -85,6 +85,7 @@ module.exports = commands =
 
       @entity.room.broadcast enterMsg, @entity
       @entity.moveTo exit.to
+      if @entity.controller? then @entity.controller.record.entity.roomId = @entity.room.roomId
       @entity.room.broadcast exitMsg, @entity
       commands.look.call this
     else
