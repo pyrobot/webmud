@@ -40,12 +40,20 @@ module.exports = class User
   write: (d) -> @conn.write @parser.parse d
   strip: (d) -> @parser.strip d
 
+  writeln: (lines...) ->
+    for line in lines
+      @write "\r\n#{line}"
+
+  writelnp: (lines...) ->
+    lines.push @settings.prompt
+    @writeln.apply this, lines
+
   changeState: (newState) ->
     @state = newState
     @mud.states[@state].enter.apply this
 
   removeNow: (callback) ->
-    @write "\r\n*{226}You are being removed from the server.\r\n"
+    @writeln "*{226}You are being removed from the server.\r\n"
     @update =>
       @mud.removeUser this, false
       @conn.end()
@@ -67,9 +75,8 @@ module.exports = class User
 
   set: (key, val) -> 
     k = key.toLowerCase()
-    s = @settings[k]
-    unless s then return @write ""
-
-    @write "\r\nSetting #{key} to #{val}\r\n"  
+    unless @settings[k] then return @writelnp "The property you are trying to set does not exist."
+    @settings[k] = val    
+    @writelnp "Setting #{key} to #{val}"
 
   updateTick: -> console.log 'User tick update'
