@@ -61,7 +61,7 @@ module.exports = class Mud extends EventEmitter
     for user in @users
       unless user is skipUser or user.state isnt 'main'
         # todo: change to use ANSI "clear until end of line" (instead of 57 spaces)
-        user.write "\r#{new Array(57).join(' ')}\r#{msg}\r\n>#{user.currentCmd}"    
+        user.write "\r#{new Array(57).join(' ')}\r#{msg}\r\n#{user.settings.prompt}#{user.currentCmd}"    
 
   start: (callback) ->
     console.log "Starting MUD"

@@ -12,6 +12,6 @@ module.exports = class Entity
     @room = newRoom
 
   displayMsg: (msg) -> 
-    @controller?.write "\r#{new Array(57).join(' ')}\r#{msg}\r\n>#{@controller.currentCmd}" if @controller
+    @controller?.write "\r#{new Array(57).join(' ')}\r#{msg}\r\n#{@controller.settings.prompt}#{@controller.currentCmd}" if @controller
 
   updateTick: -> console.log 'Entity update'
