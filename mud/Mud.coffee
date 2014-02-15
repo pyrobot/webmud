@@ -152,3 +152,18 @@ module.exports = class Mud extends EventEmitter
       @entityManager.updateTick()
       @roomManager.updateTick()
       if (@currentTick % 10) is 0 then @updateUsers()
+
+  stats: ->
+    users: _.map @users, (u) -> 
+      connection:
+        id: u.conn.id
+        'user-agent': u.conn['user-agent']
+        host: u.conn.host
+        remoteAddress: u.conn.remoteAddress
+      loggedIn: u.loggedIn
+      name: u.name
+      entity:
+        name: u?.entity?.name
+        type: u?.entity?.type
+        roomId: u?.entity?.room.roomId
+    currentTick: @currentTick

@@ -20,11 +20,6 @@ block styles
     }
 
 block content
-  nav.navbar.navbar-inverse.navbar-fixed-top(role="navigation")
-    .container-fluid
-      a.navbar-brand(href="#") Webmud
-      ul.nav.navbar-nav
-        li.active: a(href="#") Config
-        li: a(href="#") Other
+  include ../partials/navbar
   .container
     div(ng-view)

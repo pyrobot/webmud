@@ -47,6 +47,9 @@ app.post '/config', (req, res) ->
   fs.writeFileSync "#{__dirname}/../config/mudconfig.json", JSON.stringify(req.body, undefined, 2)
   res.send 200
 
+# serve stats
+app.get '/stats', (req, res) -> res.json mud.stats()
+
 # route to serve javascript files (libraries)
 app.get '/lib/:scriptName.js', (req, res) ->
   res.contentType 'application/javascript'
