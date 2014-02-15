@@ -4,7 +4,7 @@ admin.config [
   '$routeProvider',
   ($routeProvider) ->
     $routeProvider
-    .when('/config', {templateUrl: "/partials/test.html", controller: 'main'})
+    .when('/config', {templateUrl: "/partials/config.html", controller: 'main'})
     .otherwise redirectTo: '/config'    
 ]
 
