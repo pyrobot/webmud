@@ -15,15 +15,14 @@ opposites =
 module.exports = commands =
   spawn: (target) ->
     unless target then return @writelnp "Spawn a what?"
-    @mud.entityManager.add
-      name: target
-      type: 'none'
-      gender: '0'
-      roomId: 1
-      specialness: 0
 
-    @writelnp "You spawn '#{target}'."
-    @entity.room.broadcast "#{target} has appeared!", @entity
+    spawnedEntity = @mud.entityManager.spawn target, @entity.room
+
+    if spawnedEntity
+      @writelnp "You spawn '#{spawnedEntity.name}'."
+      @entity.room.broadcast "#{spawnedEntity.name} has appeared!", @entity
+    else
+      @writelnp "You could not spawn that."
 
   l: (target) -> commands.look.apply this, arguments
   look: (target) ->
@@ -35,6 +34,8 @@ module.exports = commands =
         re = new RegExp "\\b#{t}", "g"
         re.test e.name.toLowerCase()
 
+      matches = _.uniq matches, (e) -> e.name
+      
       if matches.length > 0
         lookAt = _.findWhere matches, (e) -> e.name.toLowerCase() is t
         if matches.length is 1 then lookAt = matches[0]

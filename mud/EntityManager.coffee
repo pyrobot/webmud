@@ -7,7 +7,7 @@ module.exports = class EntityManager
     @entities = []
     @entityIdCtr = 0
 
-  init: (@entityMasterList) ->
+  init: (entityList) -> @entityMasterList = _.uniq entityList, (e) -> e.id
 
   add: (entityObject) ->
     @entityIdCtr++
@@ -16,6 +16,12 @@ module.exports = class EntityManager
     entity.room.addEntity entity
     @entities.push entity
     return entity
+
+  spawn: (entityId, room) ->
+    entityToSpawn = _.findWhere @entityMasterList, entityId: parseInt entityId, 10
+    if entityToSpawn
+      entityToSpawn.roomId = room.roomId
+      @add entityToSpawn
 
   remove: (entityId) -> @removeEntity _.findWhere @entities, entityId: entityId
 
