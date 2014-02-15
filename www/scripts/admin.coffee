@@ -1,10 +1,21 @@
-admin = angular.module 'admin', []
+admin = angular.module 'admin', ['ngRoute']
 
-admin.controller 'main', ($scope, $http) ->
-  $scope.loadConfig = ->
-    get = $http.get '/config'
-    get.success (data) -> $scope.mudconfigJson = JSON.stringify(data, undefined, 2)
+admin.config [
+  '$routeProvider',
+  ($routeProvider) ->
+    $routeProvider
+    .when('/config', {templateUrl: "/partials/test.html", controller: 'main'})
+    .otherwise redirectTo: '/config'    
+]
 
-  $scope.saveConfig = ->
-    post = $http.post '/config', $scope.mudconfigJson
-    post.success -> console.log "posted"
+admin.controller 'main', [
+  '$scope','$http'
+  ($scope, $http) ->
+    $scope.loadConfig = ->
+      get = $http.get '/config'
+      get.success (data) -> $scope.mudconfigJson = JSON.stringify(data, undefined, 2)
+
+    $scope.saveConfig = ->
+      post = $http.post '/config', $scope.mudconfigJson
+      post.success -> console.log "posted"
+]
