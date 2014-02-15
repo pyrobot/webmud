@@ -5,6 +5,7 @@ fs = require 'fs'
 sockjs = require 'sockjs'
 stylus = require 'stylus'
 nib = require 'nib'
+jade = require 'jade'
 
 Mud = require './Mud'
 mud = new Mud()
@@ -63,6 +64,12 @@ app.get '/css/:styleName.css', (req, res) ->
   res.contentType 'text/css'
   file = readFile "../www/styl/#{req.params.styleName}.styl"
   unless file is null then res.send(200, stylus(file).use(nib()).render()) else res.send(404)
+
+# route to serve jade partials files as html
+app.get '/partials/:templateName.html', (req, res) ->
+  res.contentType 'text/html'
+  file = readFile "../www/partials/#{req.params.templateName}.jade"
+  unless file is null then jade.render(file, (err, html) -> if err then res.send(404) else res.send(200, html)) else res.send(404)
 
 # final fallback route redirects back to main
 app.use (req, res) -> res.redirect '/'
