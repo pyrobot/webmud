@@ -73,7 +73,7 @@ module.exports = commands =
 
     exit = _.findWhere exits, type: t
     if exit
-      if obviousExits.indexOf(t) <= 8 
+      if obviousExits.indexOf(t) <= 7 
         enterMsg = "#{@entity.name} leaves to the #{target}."
         exitMsg = "#{@entity.name} enters from the #{opposites[target]}."
       if t is 'up'
