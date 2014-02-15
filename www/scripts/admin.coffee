@@ -11,7 +11,7 @@ admin.config [
 ]
 
 admin.controller 'admin', [
-  '$scope'
+  '$scope', '$http'
   ($scope, $http) ->
     $scope.loadStats = ->
       get = $http.get '/stats'

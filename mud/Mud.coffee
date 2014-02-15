@@ -65,15 +65,17 @@ module.exports = class Mud extends EventEmitter
 
   start: (callback) ->
     console.log "Starting MUD"
-    console.log "Connecting to database"
 
     @on 'initialized', => callback() if callback
 
-    connectDb = (dbconfig) =>
-      mongoose.connect(dbconfig.mongodb)
+    connectDb = (mudsettings) =>
+      @settings = mudsettings
+      mongodb_connect = if process.env.NODE_ENV is 'production' then @settings.mongodb_prod else @settings.mongodb_dev 
+      console.log "Connecting to #{if process.env.NODE_ENV is 'production' then 'PROD' else 'DEV'} database: #{mongodb_connect}"
+      mongoose.connect mongodb_connect
       mongoose.connection.once 'open', =>
         @db.defineSchemas(mongoose)
-        query = @db.Config.findOne({})
+        query = @db.Config.findOne {}
         query.exec (err, foundConfig) =>
           if foundConfig
             @config = foundConfig
@@ -103,22 +105,38 @@ module.exports = class Mud extends EventEmitter
         else
           process.stdout.write 'File not found.\nEnter location to import mudconfig: '
 
-    location = './config/dbconfig.json'
+    location = './config/mudsettings.json'
     if fs.existsSync(location)
-      dbconfig = JSON.parse(fs.readFileSync(location, 'utf8'))
-      connectDb(dbconfig)
+      mudsettings = JSON.parse(fs.readFileSync(location, 'utf8'))
+      connectDb(mudsettings)
     else
-      console.log 'dbconfig not found'
+      console.log 'mudsettings not found, creating:'
+      mudsettings = {}
 
-      process.stdout.write 'Enter mongodb connection string: '
+      # todo - fix the waterfall
+      process.stdout.write 'Enter admin route (admin) '
       process.stdin.resume()
       process.stdin.setEncoding 'utf8'
       process.stdin.on 'data', (d) =>
         process.stdin.pause()
         process.stdin.removeAllListeners('data')
-        dbconfig = mongodb: d.replace('\n', '')
-        fs.writeFileSync location, JSON.stringify(dbconfig)
-        connectDb(dbconfig)
+        mudsettings.adminRoute = d.replace('\n', '')
+        process.stdout.write 'Enter dev mongodb connection string: '
+        process.stdin.resume()
+        process.stdin.setEncoding 'utf8'
+        process.stdin.on 'data', (d) =>
+          process.stdin.pause()
+          process.stdin.removeAllListeners('data')
+          mudsettings.mongodb_dev = d.replace('\n', '')
+          process.stdout.write 'Enter prod mongodb connection string: '
+          process.stdin.resume()
+          process.stdin.setEncoding 'utf8'
+          process.stdin.on 'data', (d) =>
+            process.stdin.pause()
+            process.stdin.removeAllListeners('data')
+            mudsettings.mongodb_prod = d.replace('\n', '')
+            fs.writeFileSync location, JSON.stringify(mudsettings)
+            connectDb(mudsettings)
 
   init: ->
     # Init room and entity managers

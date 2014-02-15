@@ -1,4 +1,5 @@
 http = require 'http'
+https = require 'https'
 express = require 'express'
 coffeescript = require 'coffee-script'
 fs = require 'fs'
@@ -7,21 +8,60 @@ stylus = require 'stylus'
 nib = require 'nib'
 jade = require 'jade'
 
+passport = require 'passport'
+LocalStrategy = require('passport-local').Strategy
+ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn
+passportHelpers = require './passportHelpers'
+
 Mud = require './Mud'
 mud = new Mud()
 
 app = express()
 
+options =
+  key: fs.readFileSync('./ssl/key.pem'),
+  cert: fs.readFileSync('./ssl/cert.pem')
+
+httpPort = 8080
+httpsPort = 4343
+
+passport.use new LocalStrategy (username, password, done) ->
+  passportHelpers.findByUsername mud, username, (err, user) ->
+    if err then return done err
+    if !user then return done null, false
+    if user.password != password then return done null, false
+    return done null, user
+
+passport.serializeUser (user, done) -> done null, user.id
+passport.deserializeUser (id, done) -> passportHelpers.find mud, id, (err, user) -> done err, user
+
 app.configure ->
-  app.set 'port', process.env.PORT or 3000
+  app.set 'port', process.env.PORT or httpsPort
   app.set 'views', "#{__dirname}/../www/templates"
   app.set 'view engine', 'jade'
   app.use express.favicon()
-  app.use express.logger('dev')
+  app.use express.logger 'dev'
+  app.use express.cookieParser()
   app.use express.bodyParser()
   app.use express.methodOverride()
-  app.use app.router
-  app.locals appTitle: "WebMUD Revival!"
+  app.use express.session secret:'roflcoptersaucelmaokeyboardcat'
+  app.use passport.initialize()
+  app.use passport.session()
+  app.locals appTitle: "WebMUD"  
+
+if process.env.NODE_ENV isnt 'production'
+  # start the http redirect server
+  redirectServer = http.createServer (req, res) ->
+    if req.headers['x-forwarded-proto'] isnt 'https'
+      url = "https://#{req.headers.host.split(':')[0]}:#{httpsPort}/"
+      res.writeHead 301, location: url
+      return res.end "Redirecting to <a href='#{url}'>#{url}</a>."
+
+  redirectServer.listen httpPort, -> console.log "HTTP redirect server started on port #{httpPort}"
+else
+  app.use (req, res, next) ->
+    if req.headers['x-forwarded-proto'] isnt 'https' then return res.redirect 301, "https://#{req.headers.host}/"
+    next()
 
 # helper function to check if file exists (and then read it synchronously), and return its contents
 readFile = (fileName) ->
@@ -33,22 +73,19 @@ readFile = (fileName) ->
 # main route
 app.get '/', (req, res) -> res.render 'index'
 
-# admin section route
-app.get '/admin', (req, res) -> res.render 'admin'
-
 # serve the mudconfig
-app.get '/config', (req, res) ->
+app.get '/config', ensureLoggedIn('/'), (req, res) ->
   res.contentType 'application/json'
   file = readFile "../config/mudconfig.json"
   unless file is null then res.send(200, file) else res.send(404)
 
 # save the mudconfig
-app.post '/config', (req, res) ->
+app.post '/config', ensureLoggedIn('/'), (req, res) ->
   fs.writeFileSync "#{__dirname}/../config/mudconfig.json", JSON.stringify(req.body, undefined, 2)
   res.send 200
 
 # serve stats
-app.get '/stats', (req, res) -> res.json mud.stats()
+app.get '/stats', ensureLoggedIn('/'), (req, res) -> res.json mud.stats()
 
 # route to serve javascript files (libraries)
 app.get '/lib/:scriptName.js', (req, res) ->
@@ -77,9 +114,13 @@ app.get '/partials/:templateName.html', (req, res) ->
 # final fallback route redirects back to main
 app.use (req, res) -> res.redirect '/'
 
-# create the http server
+# create the http(s) server
 port = app.get 'port'
-server = http.createServer app
+
+if process.env.NODE_ENV isnt 'production'
+  server = https.createServer options, app
+else
+  server = http.createServer app
 
 # server error handler
 server.on 'error', (err) -> 
@@ -91,7 +132,7 @@ server.on 'error', (err) ->
 # start the express server
 console.log "Starting web server."
 server.listen port, -> 
-  console.log "Server started on port #{port}"
+  console.log "MUD Server started on port #{port}"
 
   # initialize websocket server (sockjs)
   websocketServer = sockjs.createServer()
@@ -99,5 +140,22 @@ server.listen port, ->
   websocketServer.installHandlers server, prefix: '/ws'
 
   # finally, start the mud
-  mud.start -> console.log "Mud server startup complete."
-  
+  mud.start ->
+      # get the admin route from mudsettings
+      adminRoute = mud.settings.adminRoute
+
+      # register admin route (for the client templates)
+      app.locals.adminRoute = adminRoute
+
+      # admin section route method=get 
+      app.get "/#{adminRoute}", (req, res) -> res.render 'admin', user: req.user
+
+      # post admin section route method=post (log in)
+      app.post "/#{adminRoute}", passport.authenticate('local', { successReturnToOrRedirect: "/#{adminRoute}", failureRedirect: "/#{adminRoute}" })
+
+      # admin section route method=delete (log out)
+      app.delete "/#{adminRoute}", (req, res) ->
+        req.logout()
+        res.redirect "/#{adminRoute}"
+
+      console.log "MUD startup complete"
