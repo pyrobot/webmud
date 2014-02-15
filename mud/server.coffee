@@ -22,14 +22,29 @@ app.configure ->
   app.use app.router
   app.locals appTitle: "WebMUD Revival!"
 
-app.get '/', (req, res) -> res.render 'index'
-
 # helper function to check if file exists (and then read it synchronously), and return its contents
 readFile = (fileName) ->
   file = null
   location = "#{__dirname}/#{fileName}"
   if fs.existsSync(location) then file = fs.readFileSync(location, 'utf8')
   return file
+
+# main route
+app.get '/', (req, res) -> res.render 'index'
+
+# admin section route
+app.get '/admin', (req, res) -> res.render 'admin'
+
+# serve the mudconfig
+app.get '/config', (req, res) ->
+  res.contentType 'application/json'
+  file = readFile "../config/mudconfig.json"
+  unless file is null then res.send(200, file) else res.send(404)
+
+# save the mudconfig
+app.post '/config', (req, res) ->
+  fs.writeFileSync "#{__dirname}/../config/mudconfig.json", JSON.stringify(req.body, undefined, 2)
+  res.send 200
 
 # route to serve javascript files (libraries)
 app.get '/lib/:scriptName.js', (req, res) ->
