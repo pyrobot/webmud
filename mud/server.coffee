@@ -31,8 +31,6 @@ httpsPort = 4343
 isProduction = process.env.NODE_ENV is 'production'
 isNodejitsu = isProduction and process.env.SUBDOMAIN
 
-appSecret = 'roflcoptersaucelmaokeyboardcat'
-
 passport.use new LocalStrategy (username, password, done) ->
   passportHelpers.findByUsername mud, username, (err, user) ->
     if err then return done err
@@ -52,10 +50,11 @@ mud.start ->
     app.set 'views', "#{__dirname}/../www/templates"
     app.set 'view engine', 'jade'
     app.use express.favicon()
-    app.use express.logger 'dev'
+    app.use express.logger 'dev' unless isProduction
     app.use express.cookieParser()
     app.use express.bodyParser()
     app.use express.methodOverride()
+    sessionObj = key: 'S', secret: 'roflcoptersaucelmaokeyboardcat'
     if isProduction and mud.settings.redis_store
       redisUrl = mud.settings.redis_store
       redis = url.parse redisUrl
@@ -63,10 +62,8 @@ mud.start ->
         host: redis.hostname
         port: redis.port
         pass: if redis.auth then redis.auth.substring(redis.auth.indexOf(':') + 1) else null
-      app.use express.session secret: appSecret, store: new RedisStore(redisStore)
-    else
-      app.use express.session secret: appSecret
-
+      sessionObj.store = new RedisStore(redisStore)
+    app.use express.session sessionObj
     app.use passport.initialize()
     app.use passport.session()
     app.locals appTitle: "WebMUD"  

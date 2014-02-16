@@ -120,7 +120,7 @@ module.exports = class Mud extends EventEmitter
       process.stdin.on 'data', (d) =>
         process.stdin.pause()
         process.stdin.removeAllListeners('data')
-        mudsettings.adminRoute = d.replace('\n', '')
+        mudsettings.adminRoute = d.replace('\n', '') or 'admin'
         process.stdout.write 'Enter redis (session store) connection string: '
         process.stdin.resume()
         process.stdin.setEncoding 'utf8'
