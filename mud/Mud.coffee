@@ -142,7 +142,7 @@ module.exports = class Mud extends EventEmitter
               process.stdin.pause()
               process.stdin.removeAllListeners('data')
               mudsettings.mongodb_prod = d.replace('\n', '')
-              fs.writeFileSync location, JSON.stringify(mudsettings)
+              fs.writeFileSync location, JSON.stringify(mudsettings, undefined, 2)
               connectDb(mudsettings)
 
   init: ->
