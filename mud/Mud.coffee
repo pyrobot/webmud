@@ -121,22 +121,29 @@ module.exports = class Mud extends EventEmitter
         process.stdin.pause()
         process.stdin.removeAllListeners('data')
         mudsettings.adminRoute = d.replace('\n', '')
-        process.stdout.write 'Enter dev mongodb connection string: '
+        process.stdout.write 'Enter redis (session store) connection string: '
         process.stdin.resume()
         process.stdin.setEncoding 'utf8'
         process.stdin.on 'data', (d) =>
           process.stdin.pause()
           process.stdin.removeAllListeners('data')
-          mudsettings.mongodb_dev = d.replace('\n', '')
-          process.stdout.write 'Enter prod mongodb connection string: '
+          mudsettings.redis_store = d.replace('\n', '')
+          process.stdout.write 'Enter mongodb (dev) connection string: '
           process.stdin.resume()
           process.stdin.setEncoding 'utf8'
           process.stdin.on 'data', (d) =>
             process.stdin.pause()
             process.stdin.removeAllListeners('data')
-            mudsettings.mongodb_prod = d.replace('\n', '')
-            fs.writeFileSync location, JSON.stringify(mudsettings)
-            connectDb(mudsettings)
+            mudsettings.mongodb_dev = d.replace('\n', '')
+            process.stdout.write 'Enter mongodb (prod) connection string: '
+            process.stdin.resume()
+            process.stdin.setEncoding 'utf8'
+            process.stdin.on 'data', (d) =>
+              process.stdin.pause()
+              process.stdin.removeAllListeners('data')
+              mudsettings.mongodb_prod = d.replace('\n', '')
+              fs.writeFileSync location, JSON.stringify(mudsettings)
+              connectDb(mudsettings)
 
   init: ->
     # Init room and entity managers
