@@ -6,25 +6,19 @@ block scripts
   script(src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular-route.min.js')
   script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
   script(src='/scripts/admin.js')
-  script.
-    // manually bootstrap the app on body element
-    $(function(){angular.bootstrap(document.body, ['admin'])});
-
 
 block styles
   link(rel='stylesheet',href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
   link(rel='stylesheet',href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css')
-  style.
-    body { /* Adjustments for navbar-fixed-top */
-      padding-top: 70px;
-    }
+  link(rel='stylesheet',href='/css/admin.css')
 
 block content
-  if user
-    include ../partials/navbar
-    .container
-      div(ng-view)
-  else
-    include ../partials/navbar
-    .container
-      include login    
+  div(ng-controller='main')
+    if user
+      include ../partials/navbar
+      .container
+        div(ng-view)
+    else
+      include ../partials/navbar
+      .container
+        include login    

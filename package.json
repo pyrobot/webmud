@@ -1,6 +1,6 @@
 {
   "name": "webmud",
-  "version": "0.0.8",
+  "version": "0.0.8-2",
   "description": "A MUD written in CoffeeScript, with an HTML5 WebSockets interface, and MongoDB back-end.",
   "scripts": {
     "start": "app.js"

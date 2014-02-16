@@ -182,11 +182,11 @@ module.exports = class Mud extends EventEmitter
     users: _.map @users, (u) -> 
       connection:
         id: u.conn.id
-        'user-agent': u.conn['user-agent']
-        host: u.conn.host
+        'user-agent': u.conn.headers['user-agent']
         remoteAddress: u.conn.remoteAddress
       loggedIn: u.loggedIn
       name: u.name
+      state: u.state
       entity:
         name: u?.entity?.name
         type: u?.entity?.type

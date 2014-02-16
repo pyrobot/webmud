@@ -1,1 +1,14 @@
-div {{statsObject}}
+h2 Admin
+.panel.panel-default
+  .panel-heading Connected Users: {{ stats.users.length }}
+  .panel-body
+
+  table.table
+    thead
+      th IP
+      th State
+      //- th Action
+    tbody
+      tr(ng-repeat="user in stats.users")
+        td {{ user.connection.remoteAddress }}
+        td {{ user.state }}
