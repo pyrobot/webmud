@@ -5,6 +5,7 @@ User = require './User'
 states = require './states'
 mongoose = require 'mongoose'
 colors = require './colors'
+moment = require 'moment'
 
 EventEmitter = require('events').EventEmitter
 
@@ -66,7 +67,9 @@ module.exports = class Mud extends EventEmitter
   start: (callback) ->
     console.log "Starting MUD"
 
-    @on 'initialized', => callback() if callback
+    @on 'initialized', =>
+      @startupTime = moment()
+      callback() if callback
 
     connectDb = (mudsettings) =>
       @settings = mudsettings
@@ -179,16 +182,19 @@ module.exports = class Mud extends EventEmitter
       if (@currentTick % 10) is 0 then @updateUsers()
 
   stats: ->
+    currentTick: @currentTick
+    startupTime: @startupTime
     users: _.map @users, (u) -> 
       connection:
         id: u.conn.id
         'user-agent': u.conn.headers['user-agent']
         remoteAddress: u.conn.remoteAddress
+      connectTime: u.connectTime
+      connectDuration: (moment().diff u.connectTime) /1000
       loggedIn: u.loggedIn
-      name: u.name
+      accountName: u.name
       state: u.state
       entity:
         name: u?.entity?.name
         type: u?.entity?.type
         roomId: u?.entity?.room.roomId
-    currentTick: @currentTick

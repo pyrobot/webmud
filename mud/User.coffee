@@ -1,3 +1,5 @@
+moment = require 'moment'
+
 Parser = require './Parser'
 Entity = require './Entity'
 
@@ -9,6 +11,7 @@ module.exports = class User
     @record = null
     @parser = new Parser()
     @loggedIn = false
+    @connectTime = moment()
 
     conn.on 'data', (message) => @keyhandler(message.charCodeAt(0))
     @changeState state

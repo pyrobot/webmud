@@ -27,7 +27,8 @@
     "passport-local": "~0.1.6",
     "connect-ensure-login": "~0.1.0",
     "passport-localapikey": "0.0.3",
-    "connect-redis": "~1.4.6"
+    "connect-redis": "~1.4.6",
+    "moment": "~2.5.1"
   },
   "devDependencies": {
     "coffee-trace": "~1.4.0"

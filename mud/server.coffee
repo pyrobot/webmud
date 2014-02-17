@@ -105,7 +105,8 @@ mud.start ->
     res.send 200
 
   # serve stats
-  app.get '/stats', ensureLoggedIn('/'), (req, res) -> res.json mud.stats()
+  # app.get '/stats', ensureLoggedIn('/'), (req, res) -> res.json mud.stats()
+  app.get '/stats', (req, res) -> res.json mud.stats()
 
   # route to serve javascript files (libraries)
   app.get '/lib/:scriptName.js', (req, res) ->
