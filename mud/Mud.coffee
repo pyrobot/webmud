@@ -51,6 +51,11 @@ module.exports = class Mud extends EventEmitter
     else
       console.log "Session disconnected but user was already removed (#{user.name})"
 
+  kick: (id) ->
+    debugger
+    userToKick = _.filter @users, (u) -> u.conn.id is id
+    userToKick[0].forceQuit 'Kicked'
+
   addEntity: (entityObject) -> @entityManager.add entityObject
 
   updateUsers: -> 

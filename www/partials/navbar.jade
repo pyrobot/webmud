@@ -1,6 +1,4 @@
-form(id='logout',method='POST',action="/#{adminRoute}",style="display:none")
-  input(type="hidden",name="_method",value="delete")  
-  input(type="hidden",name="_csrf",value=token)  
+input(type="hidden",name="_csrf",value=token)  
 nav.navbar.navbar-inverse.navbar-fixed-top(role="navigation")
   .container-fluid
     a.navbar-brand(href="#") Webmud
@@ -11,4 +9,4 @@ nav.navbar.navbar-inverse.navbar-fixed-top(role="navigation")
         li(ng-class="{active: section=='config'}"): a(href="#/config") Config
         li(ng-class="{active: section=='other'}"): a(href="#/other") Other
       ul.nav.navbar-nav.navbar-right
-       li:  a(href="#",onclick="document.getElementById('logout').submit();") Logout
+       li: a(ng-click="logout()",style="cursor:pointer") Logout

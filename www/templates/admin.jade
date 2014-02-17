@@ -15,12 +15,13 @@ block styles
   link(rel='stylesheet',href='/css/admin.css')
 
 block content
-  div(ng-controller='main')
-    if user
+  if user
+    div(ng-controller='main')
       include ../partials/navbar
       .container
         div(ng-view)
-    else
+  else
+    div
       include ../partials/navbar
       .container
         include login    

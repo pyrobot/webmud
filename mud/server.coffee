@@ -140,13 +140,14 @@ mud.start ->
 
   # final fallback route redirects back to main
   app.use (req, res) -> res.redirect '/'
+
   # get the admin route from mudsettings
   adminRoute = mud.settings.adminRoute
 
   # register admin route (for the client templates)
   app.locals.adminRoute = adminRoute
 
-  # admin section route method=get 
+  # admin section
   app.get "/#{adminRoute}", csrf, (req, res) -> 
     if /\/$/.test req.path      
       res.render 'admin', user: req.user
@@ -154,15 +155,18 @@ mud.start ->
       # url cleanup
       res.redirect "/#{adminRoute}/"
 
-  # post admin section route method=post (log in)
-  app.post "/#{adminRoute}", passport.authenticate('local', { successReturnToOrRedirect: "/#{adminRoute}", failureRedirect: "/#{adminRoute}" })
+  # admin section log in
+  app.post "/#{adminRoute}/login", passport.authenticate('local', { successReturnToOrRedirect: "/#{adminRoute}/", failureRedirect: "/#{adminRoute}/" })
 
-  # admin section route method=delete (log out)
-  app.delete "/#{adminRoute}", (req, res) ->
+  # admin section log out
+  app.post "/#{adminRoute}/logout", (req, res) ->
     req.logout()
-    res.redirect "/#{adminRoute}/"
+    res.send 200
 
-  port = app.get 'port'
+  # admin kick user
+  app.post "/#{adminRoute}/kick/:id", (req, res) -> 
+    mud.kick req.params.id
+    res.send 200
 
   # if app is running on nodejitsu
   if isNodejitsu
@@ -171,6 +175,8 @@ mud.start ->
   else
     # create the https server, local http server will handle redirects
     server = https.createServer options, app    
+
+  port = app.get 'port'
 
   # server error handler
   server.on 'error', (err) -> 

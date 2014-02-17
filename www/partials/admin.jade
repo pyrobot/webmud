@@ -15,8 +15,6 @@ h2 Admin
               | Action
               i.icon-caret-down
             ul.dropdown-menu(role="menu")
-              li: a Link1
-              li: a Link2
-              li: a Link3
+              li: a(ng-click="kick(user)") Kick
         td {{ user.connection.remoteAddress }}
         td {{ user.state }}
