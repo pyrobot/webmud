@@ -31,6 +31,11 @@ httpsPort = 4343
 isProduction = process.env.NODE_ENV is 'production'
 isNodejitsu = isProduction and process.env.SUBDOMAIN
 
+# csrf middleware
+csrf = (req, res, next) -> 
+  res.locals.token = req.csrfToken()
+  next()
+
 passport.use new LocalStrategy (username, password, done) ->
   passportHelpers.findByUsername mud, username, (err, user) ->
     if err then return done err
@@ -64,6 +69,7 @@ mud.start ->
         pass: if redis.auth then redis.auth.substring(redis.auth.indexOf(':') + 1) else null
       sessionObj.store = new RedisStore(redisStore)
     app.use express.session sessionObj
+    app.use express.csrf()
     app.use passport.initialize()
     app.use passport.session()
     app.locals appTitle: "WebMUD"  
@@ -141,7 +147,7 @@ mud.start ->
   app.locals.adminRoute = adminRoute
 
   # admin section route method=get 
-  app.get "/#{adminRoute}", (req, res) -> res.render 'admin', user: req.user
+  app.get "/#{adminRoute}", csrf, (req, res) -> res.render 'admin', user: req.user
 
   # post admin section route method=post (log in)
   app.post "/#{adminRoute}", passport.authenticate('local', { successReturnToOrRedirect: "/#{adminRoute}", failureRedirect: "/#{adminRoute}" })

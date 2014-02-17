@@ -9,5 +9,6 @@ form(action="/#{adminRoute}", method='post')
       input.login-pw(type='password', name='password')
     div
       input.btn.btn-primary(type='submit', value='Submit')
+    input(type='hidden', name='_csrf', value=token)
   p
     small Hint - admin:secret
