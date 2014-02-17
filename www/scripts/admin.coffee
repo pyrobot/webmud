@@ -4,33 +4,32 @@ admin.config [
   '$routeProvider',
   ($routeProvider) ->
     $routeProvider
-    .when('/admin', {templateUrl: '/partials/admin.html', controller: 'admin'})
+    .when('/', {templateUrl: '/partials/admin.html', controller: 'admin'})
     .when('/stats', {templateUrl: '/partials/stats.html', controller: 'stats'})
     .when('/config', {templateUrl: '/partials/config.html', controller: 'config'})
     .when('/other', {templateUrl: '/partials/other.html', controller: 'other'})
-    .otherwise redirectTo: '/admin'
+    .otherwise redirectTo: '/'
 ]
 
 admin.controller 'main', [
   '$scope', '$http'
   ($scope, $http) ->
-    loadStats = ->
-      get = $http.get '/stats'
-      get.success (data) -> $scope.stats = data
-    setInterval loadStats, 5000
-    loadStats()
 ]
 
 admin.controller 'admin', [
   '$scope', '$http'
   ($scope, $http) ->
     $scope.$parent.section = 'admin'
+    get = $http.get '/stats'
+    get.success (data) -> $scope.stats = data
 ]
 
 admin.controller 'stats', [
   '$scope', '$http'
   ($scope, $http) ->
     $scope.$parent.section = 'stats'
+    get = $http.get '/stats'
+    get.success (data) -> $scope.stats = data
 ]
 
 admin.controller 'config', [

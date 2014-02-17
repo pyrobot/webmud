@@ -1,14 +1,22 @@
 h2 Admin
 .panel.panel-default
   .panel-heading Connected Users: {{ stats.users.length }}
-  .panel-body
-
-  table.table
+  //- .panel-body
+  table.table.user-table(ng-show="stats.users.length")
     thead
+      th
       th IP
       th State
-      //- th Action
     tbody
       tr(ng-repeat="user in stats.users")
+        td
+          .dropdown
+            button.btn.btn-default(role="button",data-class="dropdown-toggle",data-toggle="dropdown",data-target="#")
+              | Action
+              i.icon-caret-down
+            ul.dropdown-menu(role="menu")
+              li: a Link1
+              li: a Link2
+              li: a Link3
         td {{ user.connection.remoteAddress }}
         td {{ user.state }}
