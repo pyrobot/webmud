@@ -147,7 +147,12 @@ mud.start ->
   app.locals.adminRoute = adminRoute
 
   # admin section route method=get 
-  app.get "/#{adminRoute}", csrf, (req, res) -> res.render 'admin', user: req.user
+  app.get "/#{adminRoute}", csrf, (req, res) -> 
+    if /\/$/.test req.path      
+      res.render 'admin', user: req.user
+    else
+      # url cleanup
+      res.redirect "/#{adminRoute}/"
 
   # post admin section route method=post (log in)
   app.post "/#{adminRoute}", passport.authenticate('local', { successReturnToOrRedirect: "/#{adminRoute}", failureRedirect: "/#{adminRoute}" })
@@ -155,7 +160,7 @@ mud.start ->
   # admin section route method=delete (log out)
   app.delete "/#{adminRoute}", (req, res) ->
     req.logout()
-    res.redirect "/#{adminRoute}"
+    res.redirect "/#{adminRoute}/"
 
   port = app.get 'port'
 
