@@ -1,3 +1,4 @@
+# todo: this should obviously pull from the mud users and not be hardcoded
 users = [
   id: '1', username: 'admin', password: 'secret', name: 'Admin'
 ]
