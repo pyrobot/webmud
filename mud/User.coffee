@@ -3,6 +3,9 @@ moment = require 'moment'
 Parser = require './Parser'
 Entity = require './Entity'
 
+idleTimeoutMinutes = 5
+idleTimeoutMilliseconds = idleTimeoutMinutes * 60000
+
 module.exports = class User
 
   constructor: (@conn, @mud, state) ->
@@ -13,7 +16,19 @@ module.exports = class User
     @loggedIn = false
     @connectTime = moment()
 
-    conn.on 'data', (message) => @keyhandler(message.charCodeAt(0))
+    # helper functions to handle idle timeout
+    beginIdleTimeout = => @idleTimeout = setTimeout (=> @forceQuit "Idle for too long."), idleTimeoutMilliseconds
+    clearIdleTimeout = => clearTimeout @idleTimeout
+
+    # start the timer
+    beginIdleTimeout()
+
+    # register websocket data handler
+    conn.on 'data', (message) =>
+      clearIdleTimeout()
+      @keyhandler(message.charCodeAt(0))
+      beginIdleTimeout()
+
     @changeState state
 
   keyhandler: (keycode) ->
