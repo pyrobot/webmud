@@ -115,9 +115,9 @@ mud.start ->
   app.get '/stats', (req, res) -> res.json mud.stats()
 
   # route to serve javascript files (libraries)
-  app.get '/lib/:scriptName.js', (req, res) ->
+  app.get '/vendor/:scriptName.js', (req, res) ->
     res.contentType 'application/javascript'
-    file = readFile "../www/lib/#{req.params.scriptName}.js"
+    file = readFile "../www/vendor/#{req.params.scriptName}.js"
     unless file is null then res.send(200, file) else res.send(404)
 
   # route to serve coffee-script files (app code)
