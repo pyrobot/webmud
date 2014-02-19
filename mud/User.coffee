@@ -17,7 +17,7 @@ module.exports = class User
     @connectTime = moment()
 
     # helper functions to handle idle timeout
-    beginIdleTimeout = => @idleTimeout = setTimeout (=> @forceQuit "Idle for too long."), idleTimeoutMilliseconds
+    beginIdleTimeout = => @idleTimeout = setTimeout (=> this?.forceQuit "Idle for too long."), idleTimeoutMilliseconds
     clearIdleTimeout = => clearTimeout @idleTimeout
 
     # start the timer
