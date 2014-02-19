@@ -165,8 +165,8 @@ mud.start ->
 
   # admin kick user
   app.post "/#{adminRoute}/kick/:id", (req, res) -> 
-    mud.kick req.params.id
-    res.send 200
+    resCode = if mud.kick(req.params.id) then 200 else 404
+    res.send resCode
 
   # if app is running on nodejitsu
   if isNodejitsu
