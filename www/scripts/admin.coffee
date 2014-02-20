@@ -20,7 +20,7 @@ admin.controller 'main', [
   ($scope, $http, adminRoute) ->
     $scope.logout = ->
       post = $http.post "/#{adminRoute}/logout"
-      post.success -> window.location.href = "/#{adminRoute}"
+      post.success -> window.location.href = "/#{adminRoute}/"
 ]
 
 admin.controller 'admin', [
