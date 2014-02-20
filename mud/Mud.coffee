@@ -57,10 +57,7 @@ module.exports = class Mud extends EventEmitter
 
   addEntity: (entityObject) -> @entityManager.add entityObject
 
-  updateUsers: -> 
-    _.chain(@users)
-    .where(loggedIn: true)
-    .each (user) -> user.update()
+  updateUsers: -> _.chain(@users).where(loggedIn: true).each (user) -> user.update()
 
   broadcast: (msg, skipUser) ->
     for user in @users
