@@ -17,7 +17,7 @@ Start the MUD server with
 	
 	node app
 
-Then open your browser to [http://localhost:3000](http://localhost:3000)
+Then open your browser to [https://localhost:4343](https://localhost:4343)
 	
 ###Database
 
